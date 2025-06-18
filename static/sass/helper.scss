@@ -1,0 +1,104 @@
+/* application.scss */
+
+/* Variáveis */
+$background-color: #f4f4f4;
+$text-color: #333;
+$secondary-text: #777;
+$white: #fff;
+$light-gray: #f5f5f5;
+$border-color: #ddd;
+$shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+$hover-animation: transform 0.3s ease;
+$message-bg: rgba(0, 0, 0, 0.8);
+
+/* Reset básico */
+body, h1, h4, p, img {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Estilos gerais */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: $background-color;
+    color: $text-color;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+
+    /* Elementos dentro do body */
+    h1 {
+        font-size: 2.5em;
+        margin-bottom: 20px;
+        color: $text-color;
+    }
+
+    h4 {
+        font-size: 1.2em;
+        margin-bottom: 30px;
+        color: $secondary-text;
+    }
+}
+
+/* Componentes de imagem */
+img {
+    border-radius: 50%;
+    cursor: pointer;
+    transition: $hover-animation;
+
+    &:hover {
+        transform: scale(1.1);
+    }
+}
+
+/* Componentes de container */
+.object_centered {
+    text-align: center;
+    background: $white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: $shadow;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 600px;
+
+    /* Modificadores */
+    &.justify-text {
+        text-align: justify;
+    }
+
+    &.code-block {
+        background-color: $light-gray;
+        border: 1px solid $border-color;
+        font-family: monospace;
+        overflow-x: auto;
+    }
+}
+
+/* Componente de mensagem */
+.animated-message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    background-color: $message-bg;
+    color: $white;
+    font-size: 1.2em;
+    border-radius: 5px;
+    z-index: 1000;
+    animation: fadeInOut 2s ease-out;
+}
+
+/* Animação */
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+}

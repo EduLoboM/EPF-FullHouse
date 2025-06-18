@@ -1,3 +1,10 @@
 {
-    "idf.pythonInstallPath": "/usr/bin/python3"
+    "idf.pythonInstallPath": "/usr/bin/python3",
+    "files.associations": {
+        "*.tpl": "html"
+    },
+    "emmet.includeLanguages": {
+        "tpl": "html"
+    },
+    "emmet.triggerExpansionOnTab": true
 }
