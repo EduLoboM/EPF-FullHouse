@@ -1,0 +1,134 @@
+.form-section {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #d1dbe7;
+}
+
+.form-section .form-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.form-section .form-header .icon-container {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #4361ee, #3a0ca3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  color: #ffffff;
+  font-size: 2rem;
+}
+
+.form-section .form-container .form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.form-section .form-container .form-group {
+  position: relative;
+  margin-bottom: 1.2rem;
+}
+
+.form-section .form-container .form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #2d3748;
+}
+
+.form-section .form-container .form-group input {
+  width: 100%;
+  padding: 14px 16px 14px 45px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-section .form-container .form-group input:focus {
+  border-color: #4361ee;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+  outline: none;
+}
+
+.form-section .form-container .form-group .input-icon {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  color: #718096;
+  font-size: 1.1rem;
+}
+
+.form-section .form-container .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.form-section .form-container .form-actions .btn-submit {
+  background: linear-gradient(135deg, #4361ee, #3a0ca3);
+  color: #ffffff;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-section .form-container .form-actions .btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(67, 97, 238, 0.3);
+}
+
+.form-section .form-container .form-actions .btn-submit i {
+  margin-right: 8px;
+}
+
+.form-section .form-container .form-actions .btn-cancel {
+  background: #f1f5f9;
+  color: #4f5b6b;
+  padding: 12px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  text-align: center;
+  font-weight: 600;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-section .form-container .form-actions .btn-cancel:hover {
+  background: #e2e8f0;
+}
+
+.form-section .form-container .form-actions .btn-cancel i {
+  margin-right: 8px;
+}
+
+@media (max-width: 768px) {
+  .form-section {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+  .form-section .form-actions {
+    flex-direction: column;
+  }
+  .form-section .form-actions .btn-submit, .form-section .form-actions .btn-cancel {
+    width: 100%;
+  }
+}
