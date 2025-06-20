@@ -1,4 +1,11 @@
 from bottle import static_file
+import sys
+import os
+import requests
+from typing import Optional
+
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, PROJECT_ROOT)
 
 class BaseController:
     def __init__(self, app):
@@ -40,7 +47,7 @@ class BaseController:
 
     def test_game(self):
         """Página de teste para verificar a integração com a API Steam"""
-        from .steam_service import SteamService
+        from services.steam_service import SteamService
         steam_service = SteamService()
     
         test_ids = ["730", "570", "1849000"]
