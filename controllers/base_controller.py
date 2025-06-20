@@ -5,13 +5,11 @@ class BaseController:
         self.app = app
         self._setup_base_routes()
 
-
     def _setup_base_routes(self):
         """Configura rotas básicas comuns a todos os controllers"""
         self.app.route('/', method='GET', callback=self.home_redirect)
         self.app.route('/helper', method=['GET'], callback=self.helper)
-
-        # Rota para arquivos estáticos (CSS, JS, imagens)
+        self.app.route('/test-game', method=['GET'], callback=self.test_game)
         self.app.route('/static/<filename:path>', callback=self.serve_static)
 
 
@@ -39,3 +37,17 @@ class BaseController:
         """Método auxiliar para redirecionamento"""
         from bottle import redirect as bottle_redirect
         return bottle_redirect(path)
+
+    def test_game(self):
+        """Página de teste para verificar a integração com a API Steam"""
+        from .steam_service import SteamService
+        steam_service = SteamService()
+    
+        test_ids = ["730", "570", "1849000"]
+        games = []
+    
+        for steam_id in test_ids:
+            game = steam_service.get_game_details(steam_id)
+            if game:
+                games.append(game)  # Mantém como objeto Game, não dicionário
+        return self.render('game_test', games=games)
