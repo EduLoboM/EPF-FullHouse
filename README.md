@@ -63,6 +63,10 @@ Armazena os arquivos `.json` que simulam o banco de dados:
 - `users.json`: onde os dados dos usuários são persistidos.
 
 ---
+## 📈 Diagrama de Classes (UML)
+![Diagrama](./static/img/DIAGRAMA.png)
+
+---
 
 ## ▶️ Como Executar
 
