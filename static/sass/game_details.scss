@@ -1,8 +1,7 @@
+// Variables
 $font-family: "Inter", sans-serif;
 $color-primary: #1e90ff;
-$color-secondary: #555;
-$color-bg: #f5f5f5;
-$color-white: #fff;
+$color-secondary: #fff;
 $color-overlay: rgba(0, 0, 0, 0.5);
 $radius: 0.5rem;
 $transition-speed: 0.3s;
@@ -25,6 +24,7 @@ $transition-speed: 0.3s;
     transition: background-color $transition-speed;
 }
 
+// Global Reset
 *,
 *::before,
 *::after {
@@ -39,8 +39,22 @@ body {
     margin: 0;
     font-family: $font-family;
     color: $color-secondary;
-    background: $color-bg;
-    line-height: 1.6;
+    background-color: #000;
+    position: relative;
+    z-index: 0;
+    --bg-image: none;
+
+    &::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: var(--bg-image);
+        background-size: cover;
+        background-position: center;
+        opacity: 0.5;
+        z-index: -1;
+        pointer-events: none;
+    }
 }
 
 a {
@@ -52,12 +66,13 @@ a {
     max-width: 1200px;
     margin: 0 auto;
     padding: 1rem;
+    background: transparent;
 }
 
 .header {
-    background: $color-white;
+    background: #2e2e2e;
     padding: 1rem 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 
     .nav-container {
         @include flex-center;
@@ -73,7 +88,6 @@ a {
             svg {
                 stroke-width: 2;
             }
-
             &:hover {
                 color: $color-primary;
             }
@@ -92,7 +106,6 @@ a {
                 &:hover {
                     color: $color-primary;
                 }
-
                 svg {
                     stroke-width: 2;
                 }
@@ -140,26 +153,26 @@ a {
             gap: 2rem;
 
             .game-poster {
-                flex: 0 0 200px;
+                flex: 0 0 250px; // Aumentado de 200px para 250px
 
                 .poster-image {
                     width: 100%;
                     border-radius: $radius;
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
                 }
 
                 .poster-placeholder {
                     @include flex-center;
-                    width: 200px;
-                    height: 300px;
-                    background: darken($color-bg, 5%);
+                    width: 250px; // Aumentado de 200px para 250px
+                    height: 375px; // Aumentado proporcionalmente (300px * 1.25)
+                    background: rgba(255, 255, 255, 0.1);
                     border-radius: $radius;
                 }
             }
 
             .game-info {
                 flex: 1;
-                color: $color-white;
+                color: $color-secondary;
 
                 .game-title {
                     margin: 0 0 0.5rem;
@@ -170,6 +183,45 @@ a {
                 .game-description {
                     font-size: 0.95rem;
                     margin-bottom: 1rem;
+                }
+
+                // Sistema de Avaliação com Naipes
+                .game-rating {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                    margin: 1.5rem 0;
+
+                    .rating-suits {
+                        display: flex;
+                        gap: 0.5rem;
+                        font-size: 1.8rem;
+
+                        .suit {
+                            &.filled {
+                                color: white;
+                            }
+                            &.empty {
+                                color: #333;
+                            }
+                        }
+                    }
+
+                    .rating-info {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 0.25rem;
+
+                        .rating-score {
+                            font-size: 1.2rem;
+                            font-weight: 700;
+                        }
+
+                        .rating-count {
+                            font-size: 0.85rem;
+                            color: #aaa;
+                        }
+                    }
                 }
 
                 .game-meta {
@@ -198,12 +250,11 @@ a {
                     .btn-primary {
                         @include button-base;
                         background: $color-primary;
-                        color: $color-white;
+                        color: $color-secondary;
 
                         &:hover {
                             background: darken($color-primary, 8%);
                         }
-
                         svg {
                             margin-right: 0.5rem;
                         }
@@ -212,13 +263,12 @@ a {
                     .btn-secondary {
                         @include button-base;
                         background: transparent;
-                        border: 2px solid $color-white;
-                        color: $color-white;
+                        border: 2px solid $color-secondary;
+                        color: $color-secondary;
 
                         &:hover {
                             background: rgba(255, 255, 255, 0.1);
                         }
-
                         svg {
                             margin-right: 0.5rem;
                         }
@@ -241,51 +291,42 @@ a {
 }
 
 .media-section {
+    .section-header {
+        margin-bottom: 0.5rem;
+    }
+
     .media-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
+        display: flex;
+        gap: 0.75rem;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
 
         .media-item {
+            flex: 0 0 180px;
+            height: 120px;
             position: relative;
             border-radius: $radius;
             overflow: hidden;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.1);
 
-            &.featured {
-                grid-column: span 2;
-                height: 300px;
-
-                .video-container {
-                    width: 100%;
-                    height: 100%;
-                    position: relative;
-
-                    .media-video {
-                        width: 100%;
-                        height: 100%;
-                        object-fit: cover;
-                    }
-
-                    .play-overlay {
-                        @include flex-center;
-                        position: absolute;
-                        inset: 0;
-                        background: rgba(0, 0, 0, 0.3);
-                    }
-                }
-            }
-
-            .media-image {
+            .media-image,
+            .media-video {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
-                transition: transform $transition-speed;
+                cursor: pointer;
+            }
 
-                &:hover {
-                    transform: scale(1.05);
-                }
+            video {
+                display: block;
+            }
+
+            .play-overlay {
+                @include flex-center;
+                position: absolute;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.3);
             }
         }
     }
@@ -293,48 +334,12 @@ a {
 
 .description-section {
     .description-content {
-        background: $color-white;
+        background: #2e2e2e;
         padding: 1.5rem;
         border-radius: $radius;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         line-height: 1.8;
-    }
-}
-
-.stats-section {
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 1rem;
-
-        .stat-card {
-            @include flex-center;
-            background: $color-white;
-            padding: 1rem;
-            border-radius: $radius;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-            .stat-icon {
-                margin-right: 0.75rem;
-                svg {
-                    width: 2rem;
-                    height: 2rem;
-                }
-            }
-
-            .stat-info {
-                h3 {
-                    margin: 0;
-                    font-size: 1rem;
-                    font-weight: 600;
-                }
-                p {
-                    margin: 0.25rem 0 0;
-                    font-size: 0.9rem;
-                    color: $color-secondary;
-                }
-            }
-        }
+        color: $color-secondary;
     }
 }
 
@@ -358,13 +363,14 @@ a {
             position: absolute;
             top: -1rem;
             right: -1rem;
-            background: $color-white;
+            background: #fff;
             border-radius: 50%;
             width: 2rem;
             height: 2rem;
             @include flex-center;
             font-size: 1.2rem;
             cursor: pointer;
+            color: #555;
         }
 
         img {
@@ -382,6 +388,13 @@ a {
 
         .game-info {
             text-align: center;
+
+            .game-rating {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 0.75rem;
+            }
 
             .action-buttons {
                 flex-direction: column;

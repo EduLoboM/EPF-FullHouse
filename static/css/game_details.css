@@ -11,9 +11,23 @@ html {
 body {
   margin: 0;
   font-family: "Inter", sans-serif;
-  color: #555;
-  background: #f5f5f5;
-  line-height: 1.6;
+  color: #fff;
+  background-color: #000;
+  position: relative;
+  z-index: 0;
+  --bg-image: none;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: var(--bg-image);
+  background-size: cover;
+  background-position: center;
+  opacity: 0.5;
+  z-index: -1;
+  pointer-events: none;
 }
 
 a {
@@ -25,12 +39,13 @@ a {
   max-width: 1200px;
   margin: 0 auto;
   padding: 1rem;
+  background: transparent;
 }
 
 .header {
-  background: #fff;
+  background: #2e2e2e;
   padding: 1rem 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .header .nav-container {
@@ -45,7 +60,7 @@ a {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  color: #555;
+  color: #fff;
   font-size: 0.9rem;
   transition: color 0.3s;
 }
@@ -63,7 +78,7 @@ a {
   border: none;
   margin-left: 0.5rem;
   cursor: pointer;
-  color: #555;
+  color: #fff;
   transition: color 0.3s;
 }
 
@@ -117,22 +132,22 @@ a {
 }
 
 .hero .hero-content .hero-main .game-poster {
-  flex: 0 0 200px;
+  flex: 0 0 250px;
 }
 
 .hero .hero-content .hero-main .game-poster .poster-image {
   width: 100%;
   border-radius: 0.5rem;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
 .hero .hero-content .hero-main .game-poster .poster-placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 200px;
-  height: 300px;
-  background: #e8e8e8;
+  width: 250px;
+  height: 375px;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 0.5rem;
 }
 
@@ -150,6 +165,43 @@ a {
 .hero .hero-content .hero-main .game-info .game-description {
   font-size: 0.95rem;
   margin-bottom: 1rem;
+}
+
+.hero .hero-content .hero-main .game-info .game-rating {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.hero .hero-content .hero-main .game-info .game-rating .rating-suits {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 1.8rem;
+}
+
+.hero .hero-content .hero-main .game-info .game-rating .rating-suits .suit.filled {
+  color: white;
+}
+
+.hero .hero-content .hero-main .game-info .game-rating .rating-suits .suit.empty {
+  color: #333;
+}
+
+.hero .hero-content .hero-main .game-info .game-rating .rating-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.hero .hero-content .hero-main .game-info .game-rating .rating-info .rating-score {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.hero .hero-content .hero-main .game-info .game-rating .rating-info .rating-count {
+  font-size: 0.85rem;
+  color: #aaa;
 }
 
 .hero .hero-content .hero-main .game-info .game-meta {
@@ -229,44 +281,46 @@ a {
 
 .section-header h2 {
   font-size: 1.5rem;
-  color: #555;
+  color: #fff;
   border-bottom: 2px solid #1e90ff;
   display: inline-block;
   padding-bottom: 0.3rem;
 }
 
+.media-section .section-header {
+  margin-bottom: 0.5rem;
+}
+
 .media-section .media-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
 }
 
 .media-section .media-grid .media-item {
+  flex: 0 0 180px;
+  height: 120px;
   position: relative;
   border-radius: 0.5rem;
   overflow: hidden;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.1);
 }
 
-.media-section .media-grid .media-item.featured {
-  grid-column: span 2;
-  height: 300px;
-}
-
-.media-section .media-grid .media-item.featured .video-container {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-.media-section .media-grid .media-item.featured .video-container .media-video {
+.media-section .media-grid .media-item .media-image,
+.media-section .media-grid .media-item .media-video {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  cursor: pointer;
 }
 
-.media-section .media-grid .media-item.featured .video-container .play-overlay {
+.media-section .media-grid .media-item video {
+  display: block;
+}
+
+.media-section .media-grid .media-item .play-overlay {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -275,60 +329,13 @@ a {
   background: rgba(0, 0, 0, 0.3);
 }
 
-.media-section .media-grid .media-item .media-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s;
-}
-
-.media-section .media-grid .media-item .media-image:hover {
-  transform: scale(1.05);
-}
-
 .description-section .description-content {
-  background: #fff;
+  background: #2e2e2e;
   padding: 1.5rem;
   border-radius: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   line-height: 1.8;
-}
-
-.stats-section .stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
-}
-
-.stats-section .stats-grid .stat-card {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #fff;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.stats-section .stats-grid .stat-card .stat-icon {
-  margin-right: 0.75rem;
-}
-
-.stats-section .stats-grid .stat-card .stat-icon svg {
-  width: 2rem;
-  height: 2rem;
-}
-
-.stats-section .stats-grid .stat-card .stat-info h3 {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.stats-section .stats-grid .stat-card .stat-info p {
-  margin: 0.25rem 0 0;
-  font-size: 0.9rem;
-  color: #555;
+  color: #fff;
 }
 
 #fullscreen-modal {
@@ -364,6 +371,7 @@ a {
   justify-content: center;
   font-size: 1.2rem;
   cursor: pointer;
+  color: #555;
 }
 
 .modal .modal-content img {
@@ -379,6 +387,12 @@ a {
   }
   .hero-content .hero-main .game-info {
     text-align: center;
+  }
+  .hero-content .hero-main .game-info .game-rating {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.75rem;
   }
   .hero-content .hero-main .game-info .action-buttons {
     flex-direction: column;
