@@ -6,7 +6,7 @@ from typing import Optional
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, PROJECT_ROOT)
 
-from models.game import Game  # Importe sua classe Game
+from models.game import Game
 
 STEAM_API_KEY = '5F6D18612C18FD88C024A778365AAFA5'
 STEAM_API_BASE_URL = 'https://store.steampowered.com/api'
@@ -21,13 +21,13 @@ class SteamService:
             params = {'appids': steam_id, 'l': 'pt', 'cc': 'br'}
             response = requests.get(self.base_url, params=params)
             response.raise_for_status()
-            
+
             data = response.json()
             game_data = data.get(str(steam_id), {}).get('data', {})
-            
+
             screenshots = game_data.get('screenshots', [])
             movies = game_data.get('movies', [])
-            
+
             return Game(
                 steam_id=steam_id,
                 name=game_data.get('name', ''),
