@@ -5,7 +5,7 @@ class Config:
 
     # Configurações do servidor
     HOST = 'localhost'
-    PORT = 8080
+    PORT = 8081
     DEBUG = True
     RELOADER = True
 

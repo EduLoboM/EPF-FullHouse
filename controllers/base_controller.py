@@ -1,8 +1,6 @@
 from bottle import static_file
 import sys
 import os
-import requests
-from typing import Optional
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, PROJECT_ROOT)
@@ -18,6 +16,7 @@ class BaseController:
         self.app.route('/helper', method=['GET'], callback=self.helper)
         self.app.route('/test-game', method=['GET'], callback=self.test_game)
         self.app.route('/game/<steam_id:int>', method=['GET'], callback=self.game_details)
+        self.app.route('/game/<steam_id:int>/review', method=['GET'], callback=self.game_review)
         self.app.route('/static/<filename:path>', callback=self.serve_static)
 
     def home_redirect(self):
@@ -45,7 +44,6 @@ class BaseController:
         """Página de teste para verificar a integração com a API Steam"""
         from services.steam_service import SteamService
         steam_service = SteamService()
-
         test_ids = ["730", "570", "1102930", "1973530", "2357570", "2767030"]
         games = []
 
@@ -53,6 +51,7 @@ class BaseController:
             game = steam_service.get_game_details(steam_id)
             if game:
                 games.append(game)  # Mantém como objeto Game, não dicionário
+
         return self.render('game_test', games=games)
 
     def game_details(self, steam_id):
@@ -63,12 +62,26 @@ class BaseController:
 
             # Buscar detalhes completos do jogo
             game = steam_service.get_game_details(steam_id)
-
             if game:
                 return self.render('game_details', game=game)
             else:
                 return self.render('error', message="Jogo não encontrado", error_code=404)
-
         except Exception as e:
             print(f"Erro ao carregar detalhes do jogo {steam_id}: {str(e)}")
             return self.render('error', message=f"Erro ao carregar detalhes do jogo: {str(e)}", error_code=500)
+
+    def game_review(self, steam_id):
+        """Página para escrever review de um jogo específico"""
+        try:
+            from services.steam_service import SteamService
+            steam_service = SteamService()
+
+            # Buscar detalhes do jogo para exibir na página de review
+            game = steam_service.get_game_details(steam_id)
+            if game:
+                return self.render('review_template', game=game)
+            else:
+                return self.render('error', message="Jogo não encontrado", error_code=404)
+        except Exception as e:
+            print(f"Erro ao carregar página de review do jogo {steam_id}: {str(e)}")
+            return self.render('error', message=f"Erro ao carregar página de review: {str(e)}", error_code=500)

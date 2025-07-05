@@ -15,6 +15,7 @@ body {
   color: #fff;
   background-color: #000;
   position: relative;
+  overflow-x: hidden;
   z-index: 0;
   --bg-image: none;
 }
@@ -74,6 +75,12 @@ a {
   color: #1e90ff;
 }
 
+.header .nav-container .header-title {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #fff;
+}
+
 .header .nav-container .header-actions button {
   background: none;
   border: none;
@@ -94,6 +101,7 @@ a {
 .hero {
   position: relative;
   margin-top: 1rem;
+  margin-bottom: 2rem;
   border-radius: 0.5rem;
   overflow: hidden;
 }
@@ -255,6 +263,11 @@ a {
   background: #007cf4;
 }
 
+.hero .hero-content .hero-main .game-info .action-buttons .btn-primary:disabled {
+  background: #666;
+  cursor: not-allowed;
+}
+
 .hero .hero-content .hero-main .game-info .action-buttons .btn-primary svg {
   margin-right: 0.5rem;
 }
@@ -270,8 +283,6 @@ a {
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s;
-  min-width: 220px;
-  /* Largura mínima igual para ambos */
   background: transparent;
   border: 2px solid #fff;
   color: #fff;
@@ -289,7 +300,8 @@ a {
   margin: 2rem 0 1rem;
 }
 
-.section-header h2 {
+.section-header h2,
+.section-header h3 {
   font-size: 1.5rem;
   color: #fff;
   border-bottom: 2px solid #1e90ff;
@@ -297,103 +309,183 @@ a {
   padding-bottom: 0.3rem;
 }
 
-.media-section .section-header {
-  margin-bottom: 0.5rem;
-}
-
-.media-section .media-grid {
-  display: flex;
-  gap: 0.75rem;
-  overflow-x: auto;
-  padding-bottom: 0.5rem;
-}
-
-.media-section .media-grid .media-item {
-  flex: 0 0 180px;
-  height: 120px;
-  position: relative;
+.review-form {
+  background: #2e2e2e;
+  padding: 2rem;
   border-radius: 0.5rem;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  background: rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.media-section .media-grid .media-item .media-image,
-.media-section .media-grid .media-item .media-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.review-form .rating-section {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.review-form .rating-section .rating-stars {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.review-form .rating-section .rating-stars .star {
+  font-size: 3rem;
+  background: transparent;
+  border: none;
   cursor: pointer;
+  color: #888;
+  transition: color 0.3s, transform 0.3s;
 }
 
-.media-section .media-grid .media-item video {
-  display: block;
+.review-form .rating-section .rating-stars .star.selected {
+  color: #fff;
+  transform: scale(1.2);
 }
 
-.media-section .media-grid .media-item .play-overlay {
+.review-form .rating-section .rating-stars .star.unselected {
+  color: #888;
+}
+
+.review-form .rating-section .rating-stars .star:hover {
+  transform: scale(1.1);
+}
+
+.review-form .rating-section .rating-text {
+  color: #ccc;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.review-form .review-section {
+  margin-bottom: 2rem;
+}
+
+.review-form .review-section .review-textarea {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #444;
+  border-radius: 0.5rem;
+  background: #1e1e1e;
+  color: #fff;
+  font-family: "Inter", sans-serif;
+  font-size: 1rem;
+  resize: vertical;
+  min-height: 150px;
+  transition: border-color 0.3s;
+}
+
+.review-form .review-section .review-textarea:focus {
+  outline: none;
+  border-color: #1e90ff;
+}
+
+.review-form .review-section .review-textarea::placeholder {
+  color: #888;
+}
+
+.review-form .review-section .char-count {
+  text-align: right;
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: 0.5rem;
+}
+
+.review-form .form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.review-form .form-actions .btn-primary {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.3);
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  background: #1e90ff;
+  color: #fff;
+  font-size: 1rem;
+  padding: 0.8rem 2rem;
 }
 
-.description-section .description-content {
-  background: #2e2e2e;
+.review-form .form-actions .btn-primary:hover:not(:disabled) {
+  background: #007cf4;
+}
+
+.review-form .form-actions .btn-primary:disabled {
+  background: #666;
+  cursor: not-allowed;
+}
+
+.review-form .form-actions .btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  background: transparent;
+  border: 2px solid #fff;
+  color: #fff;
+  font-size: 1rem;
+  padding: 0.8rem 2rem;
+}
+
+.review-form .form-actions .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.review-preview {
+  background: #1e1e1e;
   padding: 1.5rem;
   border-radius: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  line-height: 1.8;
+  margin-top: 0;
+  margin-bottom: 2rem;
+  border: 1px solid #444;
+}
+
+.review-preview .preview-rating {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.review-preview .preview-rating .preview-stars {
+  font-size: 2rem;
   color: #fff;
 }
 
-#fullscreen-modal {
-  display: none;
+.review-preview .preview-rating .preview-rating-text {
+  font-size: 1rem;
+  color: #ccc;
 }
 
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-}
-
-.modal .modal-content {
-  position: relative;
-  max-width: 90%;
-  max-height: 90%;
-}
-
-.modal .modal-content .modal-close {
-  position: absolute;
-  top: -1rem;
-  right: -1rem;
-  background: #fff;
-  border-radius: 50%;
-  width: 2rem;
-  height: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  cursor: pointer;
-  color: #555;
-}
-
-.modal .modal-content img {
-  max-width: 100%;
-  max-height: 100%;
-  border-radius: 0.5rem;
+.review-preview .preview-text {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  word-break: break-word;
+  color: #fff;
+  font-style: italic;
 }
 
 @media (max-width: 768px) {
   .hero-content .hero-main {
     flex-direction: column;
     align-items: center;
+  }
+  .hero-content .hero-main .game-poster {
+    flex: 0 0 300px;
   }
   .hero-content .hero-main .game-info {
     text-align: center;
@@ -404,10 +496,41 @@ a {
     text-align: center;
     gap: 0.75rem;
   }
-  .hero-content .hero-main .game-info .action-buttons {
+  .hero-content .hero-main .game-info .action-buttons .btn-primary,
+.hero-content .hero-main .game-info .action-buttons .btn-secondary {
+    min-width: 220px;
+    /* Largura mínima igual para ambos */
+    padding: 0.8rem 1.5rem;
+    /* Padding igual ao dos outros botões */
+    font-size: 1rem;
+    /* Tamanho de fonte igual */
+    justify-content: center;
+    /* Centralizar texto */
+  }
+  .review-form {
+    padding: 1.5rem;
+  }
+  .review-form .rating-section .rating-stars {
+    gap: 0.5rem;
+  }
+  .review-form .rating-section .rating-stars .star {
+    font-size: 2.5rem;
+  }
+  .review-form .form-actions {
     flex-direction: column;
   }
-  .hero-content .hero-main .game-info .action-buttons button {
+  .review-form .form-actions button {
     width: 100%;
+  }
+  .header .nav-container {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  .header .nav-container .header-title {
+    order: -1;
+  }
+  .header .nav-container .header-actions {
+    order: 1;
   }
 }

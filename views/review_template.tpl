@@ -1,25 +1,27 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ game.name }} - Detalhes</title>
-  <link rel="stylesheet" href="/static/css/game_details.css">
+  <title>Review - {{ game.name if hasattr(game, 'name') else '' }}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/review-styles.css">
 </head>
-<body style="--bg-image: url('{{ game.first_image_url }}')">
+<body style="--bg-image: url('{{ game.first_image_url if hasattr(game, 'first_image_url') else '' }}')">
   <div class="container">
-    <!-- Header com navegação -->
+
+    <!-- Header -->
     <header class="header">
       <div class="nav-container">
-        <a href="/test-game" class="btn-back">
+        <a href="/game/{{ game.steam_id if hasattr(game, 'steam_id') else '' }}" class="btn-back">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M19 12H5M12 19l-7-7 7-7"/>
           </svg>
-          Voltar para jogos
+          Voltar ao jogo
         </a>
+        <div class="header-title">Escreva sua Review</div>
         <div class="header-actions">
           <button class="btn-favorite" onclick="toggleFavorite()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -93,19 +95,18 @@
             </div>
 
             <div class="action-buttons">
-              <button class="btn-primary" onclick="window.location.href='/game/{{ game.steam_id }}/review'">
+              <button type="button" class="btn-primary" id="submitReviewHero" disabled>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7"/>
-                  <path d="M16 16h6v6h-6z"/>
-                  <path d="M19 19v.01"/>
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                  <polyline points="22,4 12,14.01 9,11.01"/>
                 </svg>
-                Escreva uma Review!
+                Publicar Review
               </button>
-              <button class="btn-secondary" onclick="addToWishlist()">
+              <button type="button" class="btn-secondary" id="cancelReviewHero">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  <path d="M18 6L6 18M6 6l12 12"/>
                 </svg>
-                Adicione a uma Lista
+                Cancelar
               </button>
             </div>
           </div>
@@ -113,75 +114,131 @@
       </div>
     </section>
 
-    <!-- Media Section -->
-    % if (hasattr(game, 'second_image_url') and game.second_image_url) or (hasattr(game, 'trailer_url') and game.trailer_url):
-<section class="media-section">
-    <div class="section-header">
-        <h2>Mídia</h2>
-    </div>
-
-    <div class="media-grid">
-        % if hasattr(game, 'trailer_url') and game.trailer_url:
-        <div class="media-item media-video-item">
-            <div class="video-container">
-                <video class="media-video" controls poster="{{game.poster_url if hasattr(game, 'poster_url') else ''}}">
-                    <source src="{{game.trailer_url}}" type="video/mp4">
-                    Seu navegador não suporta o elemento de vídeo.
-                </video>
-            </div>
-        </div>
-        % end
-
-        % if hasattr(game, 'first_image_url') and game.first_image_url:
-        <div class="media-item">
-            <img src="{{game.first_image_url}}" alt="Screenshot 1" class="media-image" onclick="openFullscreen('{{game.first_image_url}}')">
-        </div>
-        % end
-
-        % if hasattr(game, 'second_image_url') and game.second_image_url:
-        <div class="media-item">
-            <img src="{{game.second_image_url}}" alt="Screenshot 2" class="media-image" onclick="openFullscreen('{{game.second_image_url}}')">
-        </div>
-        % end
-    </div>
-</section>
-    % end
-
-    <!-- Description Section -->
-    % if hasattr(game, 'description') and game.description:
-    <section class="description-section">
+    <!-- Review Form -->
+    <section class="review-form">
       <div class="section-header">
-        <h2>Sobre este jogo</h2>
+        <h2>Sua Avaliação</h2>
       </div>
-      <div class="description-content">
-        {{! game.description }}
+
+      <div class="rating-section">
+        <div class="rating-stars">
+          <button class="star" data-rating="1" title="1 estrela - Ruim">♠</button>
+          <button class="star" data-rating="2" title="2 estrelas - Regular">♥</button>
+          <button class="star" data-rating="3" title="3 estrelas - Bom">♦</button>
+          <button class="star" data-rating="4" title="4 estrelas - Excelente">♣</button>
+        </div>
+        <p class="rating-text">Clique nos naipes para avaliar de 1 a 4 estrelas</p>
       </div>
+
+      <div class="review-section">
+        <div class="section-header">
+          <h2>Comentário</h2>
+        </div>
+        <textarea id="reviewText" class="review-textarea" placeholder="Conte-nos o que você achou do jogo..." maxlength="500" rows="6"></textarea>
+        <div class="char-count"><span id="charCount">0</span>/500 caracteres</div>
+      </div>
+
+      <!-- REMOVIDO: Botões de enviar e cancelar que estavam aqui -->
     </section>
-    % end
 
-  </div>
+    <!-- Review Preview -->
+    <section class="review-preview" id="reviewPreview" style="display: none;">
+      <div class="section-header">
+        <h3>Preview da sua Review</h3>
+      </div>
+      <div class="preview-rating">
+        <span class="preview-stars"></span>
+        <span class="preview-rating-text"></span>
+      </div>
+      <div class="preview-text"></div>
+    </section>
 
-  <!-- Modal para imagem em tela cheia -->
-  <div id="fullscreen-modal" class="modal" onclick="closeFullscreen()">
-    <div class="modal-content">
-      <span class="modal-close" onclick="closeFullscreen()">&times;</span>
-      <img id="fullscreen-image" alt="Screenshot em tela cheia">
-    </div>
   </div>
 
   <script>
-    function openFullscreen(imageSrc) {
-      const modal = document.getElementById('fullscreen-modal');
-      modal.style.display = 'flex';
-      document.getElementById('fullscreen-image').src = imageSrc;
-      document.body.style.overflow = 'hidden';
+    // Extrair Steam ID
+    const steamId = '{{ game.steam_id if hasattr(game, 'steam_id') else '' }}';
+
+    let currentRating = 0;
+    const stars = document.querySelectorAll('.star');
+    const reviewText = document.getElementById('reviewText');
+    const charCount = document.getElementById('charCount');
+    const reviewPreview = document.getElementById('reviewPreview');
+    const submitHeroBtn = document.getElementById('submitReviewHero');
+
+    const suits = ['♠', '♥', '♦', '♣'];
+    const suitNames = ['Ruim', 'Regular', 'Bom', 'Excelente'];
+
+    function updateRating(rating) {
+      currentRating = rating;
+      stars.forEach((star, i) => {
+        star.classList.toggle('selected', i < rating);
+        star.classList.toggle('unselected', i >= rating);
+      });
+
+      // Atualizar botão no hero
+      submitHeroBtn.disabled = rating === 0;
+
+      updatePreview();
     }
 
-    function closeFullscreen() {
-      const modal = document.getElementById('fullscreen-modal');
-      modal.style.display = 'none';
-      document.body.style.overflow = 'auto';
+    stars.forEach((star, idx) => star.addEventListener('click', () => updateRating(idx + 1)));
+
+    reviewText.addEventListener('input', function() {
+      charCount.textContent = this.value.length;
+      updatePreview();
+    });
+
+    function updatePreview() {
+      if (currentRating > 0 || reviewText.value.trim()) {
+        reviewPreview.style.display = 'block';
+        let starsHtml = Array(currentRating).fill().map((_, i) => suits[i]).join(' ');
+        document.querySelector('.preview-stars').innerHTML = starsHtml;
+        document.querySelector('.preview-rating-text').textContent = currentRating > 0
+          ? `${currentRating}/4 estrelas - ${suitNames[currentRating-1]}`
+          : 'Sem avaliação';
+        document.querySelector('.preview-text').textContent = reviewText.value.trim() || 'Nenhum comentário escrito.';
+      } else {
+        reviewPreview.style.display = 'none';
+      }
     }
+
+    function submitReview() {
+      if (!currentRating) {
+        alert('Selecione uma avaliação!');
+        return;
+      }
+
+      const reviewData = {
+        steamId,
+        rating: currentRating,
+        text: reviewText.value.trim(),
+        timestamp: new Date().toISOString()
+      };
+
+      // Desabilitar botão
+      submitHeroBtn.textContent = 'Enviando...';
+      submitHeroBtn.disabled = true;
+
+      setTimeout(() => {
+        alert(`Review enviada! ${currentRating}/4 (${suitNames[currentRating-1]})`);
+        window.location.href = `/game/${steamId}`;
+      }, 1000);
+    }
+
+    function cancelReview() {
+      if (currentRating || reviewText.value.trim()) {
+        if (confirm('Cancelar e perder o que foi escrito?')) {
+          window.history.back();
+        }
+      } else {
+        window.history.back();
+      }
+    }
+
+    // Event listeners para os botões no hero
+    document.getElementById('submitReviewHero').addEventListener('click', submitReview);
+    document.getElementById('cancelReviewHero').addEventListener('click', cancelReview);
 
     function toggleFavorite() {
       document.querySelector('.btn-favorite').classList.toggle('active');
@@ -189,15 +246,15 @@
 
     function shareGame() {
       if (navigator.share) {
-        navigator.share({ title: '{{ game.name }}', text: 'Confira {{ game.name }}', url: window.location.href });
+        navigator.share({
+          title: '{{ game.name }}',
+          text: 'Confira {{ game.name }}',
+          url: window.location.href
+        });
       } else {
         navigator.clipboard.writeText(window.location.href);
         alert('Link copiado!');
       }
-    }
-
-    function addToWishlist() {
-      alert('Adicionado à lista de desejos!');
     }
 
     // Função para renderizar rating com naipes
@@ -235,12 +292,8 @@
       ratingCount.textContent = `${totalReviews} avaliações`;
     }
 
-    // Exemplo de como usar a função (remover em produção)
-    // renderRating(8.5, 234);
-
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeFullscreen();
-    });
+    // Inicializar preview
+    updatePreview();
   </script>
 </body>
 </html>
