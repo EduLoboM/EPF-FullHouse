@@ -1,16 +1,15 @@
-import json
 import os
-from typing import List, Optional, Dict, Any  # Adicione imports necessários
+from typing import Dict, Any
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data')
 
 class Game:
     def __init__(
-        self, 
-        steam_id: str, 
-        name: str, 
-        description: str = "", 
-        release_date: str = "", 
+        self,
+        steam_id: str,
+        name: str,
+        description: str = "",
+        release_date: str = "",
         price: str = "",
         poster_url: str = "",
         first_image_url: str = "",
