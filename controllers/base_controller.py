@@ -2,18 +2,22 @@ from bottle import static_file, request, response, redirect, abort
 import sys
 import os
 import uuid
+import json
 from datetime import datetime
+from typing import Optional, Any, Dict
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, PROJECT_ROOT)
 
-# Importar as classes de usuário
+# Importar as classes de usuário e review
 from models.user import User, Admin, UserModel
+from models.review import Review, ReviewModel
 
 class BaseController:
     def __init__(self, app):
         self.app = app
         self.user_model = UserModel()  # Modelo de usuário com persistência
+        self.review_model = ReviewModel()  # Modelo de review com persistência
         self.sessions = {}  # Sessões ativas
         self._setup_base_routes()
 
@@ -33,18 +37,24 @@ class BaseController:
         self.app.route('/game/<steam_id:int>', method=['GET'], callback=self.require_login(self.game_details))
         self.app.route('/game/<steam_id:int>/review', method=['GET'], callback=self.require_login(self.game_review))
 
+        # Nova rota para salvar reviews
+        self.app.route('/game/<steam_id:int>/review', method=['POST'], callback=self.require_login(self.save_review))
+
+        # Rota para API de reviews (JSON)
+        self.app.route('/api/reviews/<steam_id:int>', method=['GET'], callback=self.require_login(self.get_reviews_json))
+
         # Arquivos estáticos (não precisam de login)
         self.app.route('/static/<filename:path>', callback=self.serve_static)
         self.app.route('/css/<filename:path>', callback=self.serve_css)
 
-    def get_session(self):
+    def get_session(self) -> Optional[Dict[str, Any]]:
         """Pega a sessão atual baseada no cookie"""
         session_id = request.get_cookie('session_id')
         if session_id and session_id in self.sessions:
             return self.sessions[session_id]
         return None
 
-    def create_session(self, user_data):
+    def create_session(self, user_data: Dict[str, Any]) -> str:
         """Cria uma nova sessão para o usuário"""
         session_id = str(uuid.uuid4())
         self.sessions[session_id] = user_data
@@ -60,25 +70,57 @@ class BaseController:
             return func(*args, **kwargs)
         return wrapper
 
-    def get_next_user_id(self):
+    def get_next_user_id(self) -> int:
         """Gera o próximo ID de usuário"""
         users = self.user_model.get_all()
         if not users:
             return 1
         return max(user.id for user in users) + 1
 
-    def find_user_by_email(self, email):
+    def get_next_review_id(self) -> int:
+        """Gera o próximo ID de review"""
+        reviews = self.review_model.get_all()
+        if not reviews:
+            return 1
+        return max(review.id for review in reviews) + 1
+
+    def find_user_by_email(self, email: str) -> Optional[User]:
         """Busca usuário por email"""
         users = self.user_model.get_all()
         return next((user for user in users if user.email == email), None)
 
-    def validate_email(self, email):
+    def validate_email(self, email: str) -> bool:
         """Validação básica de email"""
         return '@' in email and '.' in email
 
-    def validate_password(self, password):
+    def validate_password(self, password: str) -> bool:
         """Validação básica de senha"""
         return len(password) >= 3  # Mínimo 3 caracteres
+
+    def safe_get_form_data(self, field_name: str, default: str = '') -> str:
+        """Método auxiliar para acessar dados do formulário de forma segura"""
+        try:
+            # Em Bottle, request.forms é um FormsDict que permite acesso por atributo
+            if hasattr(request.forms, field_name):
+                value = getattr(request.forms, field_name)
+                return value if value is not None else default
+            return default
+        except (AttributeError, KeyError):
+            return default
+
+    def safe_get_json_data(self) -> Optional[Dict[str, Any]]:
+        """Método auxiliar para acessar dados JSON de forma segura"""
+        try:
+            # request.json pode ser None se não houver JSON válido
+            json_data = request.json
+            if json_data is None:
+                return None
+            # Converter para dict se necessário
+            if isinstance(json_data, dict):
+                return json_data
+            return None
+        except (AttributeError, ValueError, TypeError):
+            return None
 
     # Rotas de autenticação
     def login_form(self):
@@ -87,8 +129,8 @@ class BaseController:
 
     def login(self):
         """Processa login do usuário"""
-        email = getattr(request.forms, 'email', '')
-        password = getattr(request.forms, 'password', '')
+        email = self.safe_get_form_data('email')
+        password = self.safe_get_form_data('password')
 
         if not email or not password:
             return self.render('login', erro="Email e senha são obrigatórios")
@@ -115,11 +157,11 @@ class BaseController:
 
     def signup(self):
         """Processa cadastro do usuário"""
-        name = getattr(request.forms, 'name', '')
-        email = getattr(request.forms, 'email', '')
-        birthdate = getattr(request.forms, 'birthdate', '')
-        password = getattr(request.forms, 'password', '')
-        confirm_password = getattr(request.forms, 'confirm_password', '')
+        name = self.safe_get_form_data('name')
+        email = self.safe_get_form_data('email')
+        birthdate = self.safe_get_form_data('birthdate')
+        password = self.safe_get_form_data('password')
+        confirm_password = self.safe_get_form_data('confirm_password')
 
         # Validações
         if not all([name, email, birthdate, password, confirm_password]):
@@ -178,11 +220,16 @@ class BaseController:
 
     def helper(self):
         session = self.get_session()
+        if not session:
+            return redirect('/login')
         return self.render('helper-final', user=session)
 
     def test_game(self):
         """Página de teste para verificar a integração com a API Steam"""
         session = self.get_session()
+        if not session:
+            return redirect('/login')
+
         from services.steam_service import SteamService
         steam_service = SteamService()
         test_ids = ["730", "570", "1102930", "1973530", "2357570", "2767030"]
@@ -196,12 +243,29 @@ class BaseController:
     def game_details(self, steam_id):
         """Página de detalhes de um jogo específico"""
         session = self.get_session()
+        if not session:
+            return redirect('/login')
+
         try:
             from services.steam_service import SteamService
             steam_service = SteamService()
             game = steam_service.get_game_details(steam_id)
             if game:
-                return self.render('game_details', game=game, user=session)
+                # Buscar reviews do jogo
+                reviews = self.review_model.get_by_game_id(steam_id)
+
+                # Calcular estatísticas das reviews
+                total_reviews = len(reviews)
+                avg_rating = 0
+                if total_reviews > 0:
+                    avg_rating = sum(r.rating for r in reviews) / total_reviews
+
+                return self.render('game_details',
+                                 game=game,
+                                 user=session,
+                                 reviews=reviews,
+                                 total_reviews=total_reviews,
+                                 avg_rating=avg_rating)
             else:
                 return self.render('error', message="Jogo não encontrado", error_code=404, user=session)
         except Exception as e:
@@ -211,17 +275,149 @@ class BaseController:
     def game_review(self, steam_id):
         """Página para escrever review de um jogo específico"""
         session = self.get_session()
+        if not session:
+            return redirect('/login')
+
         try:
             from services.steam_service import SteamService
             steam_service = SteamService()
             game = steam_service.get_game_details(steam_id)
             if game:
-                return self.render('review_template', game=game, user=session)
+                # Verificar se o usuário já fez review deste jogo
+                existing_review = None
+                user_reviews = self.review_model.get_by_user_id(session['id'])
+                for review in user_reviews:
+                    if review.game_id == steam_id:
+                        existing_review = review
+                        break
+
+                return self.render('review_template',
+                                 game=game,
+                                 user=session,
+                                 existing_review=existing_review)
             else:
                 return self.render('error', message="Jogo não encontrado", error_code=404, user=session)
         except Exception as e:
             print(f"Erro ao carregar página de review do jogo {steam_id}: {str(e)}")
             return self.render('error', message=f"Erro ao carregar página de review: {str(e)}", error_code=500, user=session)
+
+    def save_review(self, steam_id):
+        """Salva ou atualiza uma review"""
+        session = self.get_session()
+        if not session:
+            return redirect('/login')
+
+        try:
+            rating = None
+            text = ''
+
+            # Verificar se é uma requisição JSON (AJAX)
+            if request.content_type and 'application/json' in request.content_type:
+                json_data = self.safe_get_json_data()
+                if json_data:
+                    rating = json_data.get('rating')
+                    text = json_data.get('text', '')
+            else:
+                # Formulário HTML tradicional
+                rating = self.safe_get_form_data('rating')
+                text = self.safe_get_form_data('text')
+
+            # Limpar texto
+            text = text.strip() if text else ''
+
+            # Validações
+            if not rating or not str(rating).isdigit():
+                response.status = 400
+                return json.dumps({'error': 'Rating é obrigatório e deve ser um número'})
+
+            rating = int(rating)
+            if rating < 1 or rating > 4:
+                response.status = 400
+                return json.dumps({'error': 'Rating deve estar entre 1 e 4'})
+
+            if len(text) > 500:
+                response.status = 400
+                return json.dumps({'error': 'Texto da review deve ter no máximo 500 caracteres'})
+
+            # Verificar se já existe uma review do usuário para este jogo
+            existing_review = None
+            user_reviews = self.review_model.get_by_user_id(session['id'])
+            for review in user_reviews:
+                if review.game_id == steam_id:
+                    existing_review = review
+                    break
+
+            if existing_review:
+                # Atualizar review existente
+                existing_review.rating = rating
+                existing_review.text = text
+                self.review_model.update_review(existing_review)
+                message = 'Review atualizada com sucesso!'
+            else:
+                # Criar nova review
+                review_id = self.get_next_review_id()
+                new_review = Review(
+                    id=review_id,
+                    game_id=steam_id,
+                    user_id=session['id'],
+                    rating=rating,
+                    text=text
+                )
+                self.review_model.add_review(new_review)
+                message = 'Review salva com sucesso!'
+
+            # Resposta JSON para AJAX
+            if request.content_type and 'application/json' in request.content_type:
+                response.content_type = 'application/json'
+                return json.dumps({
+                    'success': True,
+                    'message': message,
+                    'redirect': f'/game/{steam_id}'
+                })
+            else:
+                # Redirecionamento para formulário HTML
+                return redirect(f'/game/{steam_id}')
+
+        except Exception as e:
+            print(f"Erro ao salvar review: {str(e)}")
+            response.status = 500
+
+            if request.content_type and 'application/json' in request.content_type:
+                return json.dumps({'error': f'Erro interno: {str(e)}'})
+            else:
+                return self.render('error', message=f"Erro ao salvar review: {str(e)}", error_code=500, user=session)
+
+    def get_reviews_json(self, steam_id):
+        """Retorna reviews em formato JSON"""
+        try:
+            reviews = self.review_model.get_by_game_id(steam_id)
+
+            # Converter para formato mais amigável
+            reviews_data = []
+            for review in reviews:
+                # Buscar dados do usuário
+                user = next((u for u in self.user_model.get_all() if u.id == review.user_id), None)
+                user_name = user.name if user else "Usuário Desconhecido"
+
+                reviews_data.append({
+                    'id': review.id,
+                    'rating': review.rating,
+                    'text': review.text,
+                    'user_name': user_name,
+                    'user_id': review.user_id
+                })
+
+            response.content_type = 'application/json'
+            return json.dumps({
+                'reviews': reviews_data,
+                'total': len(reviews_data),
+                'average_rating': sum(r['rating'] for r in reviews_data) / len(reviews_data) if reviews_data else 0
+            })
+
+        except Exception as e:
+            print(f"Erro ao buscar reviews: {str(e)}")
+            response.status = 500
+            return json.dumps({'error': str(e)})
 
     # Métodos auxiliares
     def serve_static(self, filename):

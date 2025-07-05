@@ -1,0 +1,16 @@
+[
+    {
+        "id": 1,
+        "game_id": 730,
+        "user_id": 3,
+        "rating": 4,
+        "text": "Top"
+    },
+    {
+        "id": 2,
+        "game_id": 1102930,
+        "user_id": 3,
+        "rating": 2,
+        "text": "meh"
+    }
+]
