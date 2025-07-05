@@ -7,12 +7,12 @@
     <div class="management-header">
         <div class="header-content">
             <h1>
-                <i class="fas fa-users"></i> 
+                <i class="fas fa-users"></i>
                 Gestão de Usuários
             </h1>
         </div>
         <a href="/users/add" class="btn btn-primary">
-            <i class="fas fa-plus-circle"></i> Novo Usuário
+            <i class="fas fa-plus-circle"></i> Criar Admin
         </a>
     </div>
 
@@ -63,7 +63,7 @@
                                 <a href="/users/edit/{{u.id}}" class="btn-action btn-edit" title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form action="/users/delete/{{u.id}}" method="post" 
+                                <form action="/users/delete/{{u.id}}" method="post"
                                       onsubmit="return confirm('Tem certeza que deseja excluir este usuário?');">
                                     <button type="submit" class="btn-action btn-delete" title="Excluir">
                                         <i class="fas fa-trash-alt"></i>
