@@ -1,9 +1,16 @@
 [
-    {
-        "id": 1,
-        "name": "Edu",
-        "email": "eduardolbo1707@gmail.com",
-        "password": "Coiso12345",
-        "birthdate": "2005-12-07"
-    }
+  {
+    "id": 1,
+    "name": "Edu",
+    "email": "eduardolbo1707@gmail.com",
+    "password": "Coiso12345",
+    "birthdate": "2005-12-07"
+  },
+  {
+    "id": 2,
+    "name": "Zeca",
+    "email": "Zeca@gmail.com",
+    "password": "123123",
+    "birthdate": "2025-07-05"
+  }
 ]
