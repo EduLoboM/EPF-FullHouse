@@ -19,5 +19,12 @@
         "email": "cucabel@gmail.com",
         "password": "12341234",
         "birthdate": "2019-07-01"
+    },
+    {
+        "id": 4,
+        "name": "Brr Brr Patapim",
+        "email": "arthurmss2006@gmail.com",
+        "password": "12345",
+        "birthdate": "2025-07-04"
     }
 ]

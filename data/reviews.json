@@ -12,5 +12,12 @@
         "user_id": 3,
         "rating": 2,
         "text": "meh"
+    },
+    {
+        "id": 3,
+        "game_id": 570,
+        "user_id": 4,
+        "rating": 4,
+        "text": "penis"
     }
 ]
