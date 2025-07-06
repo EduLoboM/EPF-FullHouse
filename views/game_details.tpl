@@ -21,7 +21,7 @@
           Voltar para jogos
         </a>
         <div class="header-actions">
-          <button class="btn-favorite" onclick="toggleFavorite()">
+          <button id="btn-favorite" class="btn-favorite" onclick="toggleFavorite({{game.steam_id}})">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
             </svg>
@@ -183,8 +183,27 @@
       document.body.style.overflow = 'auto';
     }
 
-    function toggleFavorite() {
-      document.querySelector('.btn-favorite').classList.toggle('active');
+     async function toggleFavorite(steamId) {
+       const btn = document.getElementById('btn-favorite');
+       try {
+         const res = await fetch(`/favorite/${steamId}`, {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/json' }
+          });
+        const data = await res.json();
+         if (data.status === 'ok') {
+           // adiciona ou remove a class 'active' conforme a ação
+           if (data.action === 'added') {
+            btn.classList.add('active');
+            } else {
+            btn.classList.remove('active');
+            }
+        } else {
+            console.error('Falha ao favoritar:', data);
+        }
+        } catch (err) {
+        console.error('Erro de rede:', err);
+        }
     }
 
     function shareGame() {

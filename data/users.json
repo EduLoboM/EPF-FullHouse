@@ -26,5 +26,12 @@
         "email": "arthurmss2006@gmail.com",
         "password": "12345",
         "birthdate": "2025-07-04"
+    },
+    {
+        "id": 5,
+        "name": "UserNovo",
+        "email": "UserNovo1@uol.com",
+        "password": "12345",
+        "birthdate": "1010-10-10"
     }
 ]

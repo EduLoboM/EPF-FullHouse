@@ -19,5 +19,12 @@
         "user_id": 4,
         "rating": 4,
         "text": "penis"
+    },
+    {
+        "id": 4,
+        "game_id": 570,
+        "user_id": 5,
+        "rating": 4,
+        "text": "Brr Brr Patapim é guei"
     }
 ]

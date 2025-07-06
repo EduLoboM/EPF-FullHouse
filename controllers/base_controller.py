@@ -1,10 +1,12 @@
-from bottle import static_file, request, response, redirect, abort
+from bottle import static_file, request, response, redirect
 import sys
 import os
 import uuid
 import json
-from datetime import datetime
-from typing import Optional, Any, Dict
+from typing import Optional, Any, cast, Dict, Any
+from models.lista import FavoriteListModel
+from services.steam_service import SteamService
+
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, PROJECT_ROOT)
@@ -36,6 +38,10 @@ class BaseController:
         self.app.route('/test-game', method=['GET'], callback=self.require_login(self.test_game))
         self.app.route('/game/<steam_id:int>', method=['GET'], callback=self.require_login(self.game_details))
         self.app.route('/game/<steam_id:int>/review', method=['GET'], callback=self.require_login(self.game_review))
+        self.app.route('/profile', method=['GET'], callback=self.require_login(self.profile))
+
+        self.app.route('/favorite/<steam_id:int>', method='POST',
+                       callback=self.require_login(self.toggle_favorite))
 
         # Nova rota para salvar reviews
         self.app.route('/game/<steam_id:int>/review', method=['POST'], callback=self.require_login(self.save_review))
@@ -192,6 +198,8 @@ class BaseController:
 
         # Salvar usuário
         self.user_model.add_user(new_user)
+        fav_model = FavoriteListModel()
+        fav_model.create_default_list(user_id)
 
         # Criar sessão automaticamente
         session_data = {
@@ -437,3 +445,67 @@ class BaseController:
         """Método auxiliar para redirecionamento"""
         from bottle import redirect as bottle_redirect
         return bottle_redirect(path)
+
+    def profile(self):
+        """Página de perfil mostrando listas de favoritos e reviews do usuário."""
+        # 1) Garante sessão válida
+        session = self.get_session()
+        if session is None:
+            return redirect('/login')
+        session = cast(Dict[str, Any], session)
+
+        user_id = session['id']
+
+        # 2) Pega as reviews do usuário
+        reviews = self.review_model.get_by_user_id(user_id)
+
+        # 3) Pega as listas de favoritos
+        fav_model = FavoriteListModel()
+        raw_lists = fav_model.get_by_user(user_id)
+
+        steam = SteamService()
+        favorite_lists = []
+        for lst in raw_lists:
+            games = [steam.get_game_details(gid) for gid in lst.game_ids]
+            favorite_lists.append({
+                'list': lst,
+                'games': games
+            })
+
+        # 4) Renderiza template
+        return self.render(
+            'profile',
+            user=session,
+            favorite_lists=favorite_lists,
+            reviews=reviews
+        )
+
+    def toggle_favorite(self, steam_id):
+        """Adiciona ou remove o jogo da lista 'Favoritos' do usuário logado."""
+        # 1) Garante sessão válida
+        session = self.get_session()
+        if session is None:
+            return redirect('/login')
+        # Assegura ao Pyright que session['id'] é um int
+        user_id = int(session['id'])
+
+        # 2) Puxa ou cria a lista padrão “Favoritos”
+        from models.lista import FavoriteListModel
+        fav_model = FavoriteListModel()
+        fav_list = fav_model.create_default_list(user_id)
+
+        # 3) Toggle: se já estiver, remove; caso contrário, adiciona
+        if steam_id in fav_list.game_ids:
+            fav_model.remove_game_from_list(fav_list.id, steam_id, user_id)
+            action = 'removed'
+        else:
+            fav_model.add_game_to_list(fav_list.id, steam_id, user_id)
+            action = 'added'
+
+        # 4) Retorna JSON para o front indicar o novo estado
+        response.content_type = 'application/json'
+        return json.dumps({
+            'status': 'ok',
+            'action': action,
+            'steam_id': steam_id
+        })

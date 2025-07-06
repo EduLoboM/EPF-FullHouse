@@ -1,0 +1,10 @@
+[
+    {
+        "id": 1,
+        "user_id": 5,
+        "name": "Favoritos",
+        "game_ids": [
+            1102930
+        ]
+    }
+]
