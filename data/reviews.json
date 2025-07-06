@@ -26,5 +26,12 @@
         "user_id": 5,
         "rating": 4,
         "text": "Brr Brr Patapim é guei"
+    },
+    {
+        "id": 5,
+        "game_id": 730,
+        "user_id": 6,
+        "rating": 4,
+        "text": "Foda"
     }
 ]

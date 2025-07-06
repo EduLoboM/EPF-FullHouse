@@ -37,6 +37,17 @@ class BaseController:
         self.app.route('/helper', method=['GET'], callback=self.require_login(self.helper))
         self.app.route('/test-game', method=['GET'], callback=self.require_login(self.test_game))
         self.app.route('/game/<steam_id:int>', method=['GET'], callback=self.require_login(self.game_details))
+        # após as rotas de review...
+        self.app.route('/game/<steam_id:int>/lista',
+                       method='GET',
+                       callback=self.require_login(self.list_lists))
+        self.app.route('/game/<steam_id:int>/lista/criar',
+                       method='POST',
+                       callback=self.require_login(self.create_list_and_add))
+        self.app.route('/game/<steam_id:int>/lista/<list_id:int>/adicionar',
+                       method='POST',
+                       callback=self.require_login(self.toggle_in_list))
+
         self.app.route('/game/<steam_id:int>/review', method=['GET'], callback=self.require_login(self.game_review))
         self.app.route('/profile', method=['GET'], callback=self.require_login(self.profile))
 
@@ -509,3 +520,68 @@ class BaseController:
             'action': action,
             'steam_id': steam_id
         })
+
+    def list_lists(self, steam_id):
+        session = self.get_session()
+        if session is None:
+            return redirect('/login')
+        session = cast(Dict[str, Any], session)
+        user_id = int(session['id'])           # ← define user_id
+
+        # Busca detalhes do jogo
+        steam = SteamService()
+        game = steam.get_game_details(steam_id)
+        if not game:
+            return self.render('error', message="Jogo não encontrado", error_code=404, user=session)
+
+        fav_model = FavoriteListModel()
+        fav_model.create_default_list(user_id)
+
+        raw = fav_model.get_by_user(user_id)
+        user_lists = []
+        for lst in raw:
+            user_lists.append({
+                'id': lst.id,
+                'name': lst.name,
+                'count': len(lst.game_ids),
+                'has_game': steam_id in lst.game_ids
+            })
+
+        return self.render('lists', game=game, user=session, user_lists=user_lists)
+
+
+    def create_list_and_add(self, steam_id):
+        session = self.get_session()
+        if session is None:
+            return redirect('/login')
+        session = cast(Dict[str, Any], session)
+        user_id = int(session['id'])           # ← define user_id
+
+        name = self.safe_get_form_data('name')
+        fav_model = FavoriteListModel()
+        new_list = fav_model.create_list(user_id, name)
+        fav_model.add_game_to_list(new_list.id, steam_id, user_id)
+
+        return redirect(f'/game/{steam_id}/lista')
+
+
+    def toggle_in_list(self, steam_id, list_id):
+        """Adiciona ou remove o jogo da lista, conforme presença atual."""
+        session = self.get_session()
+        if session is None:
+            return redirect('/login')
+        session = cast(Dict[str, Any], session)
+        user_id = int(session['id'])
+
+        fav_model = FavoriteListModel()
+        lst = fav_model.get_by_id(list_id)
+        if not lst or lst.user_id != user_id:
+            return self.render('error', message="Lista não encontrada ou não autorizada", error_code=403, user=session)
+
+        # Se já está na lista, remove; caso contrário, adiciona
+        if steam_id in lst.game_ids:
+            fav_model.remove_game_from_list(list_id, steam_id, user_id)
+        else:
+            fav_model.add_game_to_list(list_id, steam_id, user_id)
+
+        return redirect(f'/game/{steam_id}/lista')

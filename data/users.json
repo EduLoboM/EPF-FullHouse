@@ -33,5 +33,12 @@
         "email": "UserNovo1@uol.com",
         "password": "12345",
         "birthdate": "1010-10-10"
+    },
+    {
+        "id": 6,
+        "name": "Mariana Lôbo",
+        "email": "mari123@mari.com",
+        "password": "111111",
+        "birthdate": "1111-11-11"
     }
 ]

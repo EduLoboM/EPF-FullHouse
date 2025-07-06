@@ -4,7 +4,8 @@
         "user_id": 5,
         "name": "Favoritos",
         "game_ids": [
-            1102930
+            1102930,
+            570
         ]
     },
     {
@@ -13,6 +14,31 @@
         "name": "Favoritos",
         "game_ids": [
             2357570
+        ]
+    },
+    {
+        "id": 3,
+        "user_id": 5,
+        "name": "Jogos bons",
+        "game_ids": [
+            570
+        ]
+    },
+    {
+        "id": 4,
+        "user_id": 6,
+        "name": "Favoritos",
+        "game_ids": [
+            730
+        ]
+    },
+    {
+        "id": 5,
+        "user_id": 6,
+        "name": "Games da mari",
+        "game_ids": [
+            1973530,
+            730
         ]
     }
 ]
