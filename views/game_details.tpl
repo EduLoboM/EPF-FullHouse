@@ -67,15 +67,34 @@
 
             <!-- Sistema de Avaliação com Naipes -->
             <div class="game-rating">
+% # Converte média 1–4 para 0–10
+% score = avg_rating * 2.5 if avg_rating else 0
+% # Determina quantos naipes "cheios" (1 a 4)
+% filled = int(score // 2.5) if score > 0 else 0
+% if filled > 4:
+%   filled = 4
+% end
+% # Ordem dos naipes: ouros, paus, copas, espadas
+% suits = ['♦', '♣', '♥', '♠']
+
               <div class="rating-suits">
-                <span class="suit filled">♠</span>
-                <span class="suit filled">♥</span>
-                <span class="suit filled">♦</span>
-                <span class="suit empty">♣</span>
+% for i in range(4):
+%   if i < filled:
+                <span class="suit filled">{{ suits[i] }}</span>
+%   else:
+                <span class="suit empty">{{ suits[i] }}</span>
+%   end
+% end
               </div>
+
               <div class="rating-info">
-                <span class="rating-score">8.5/10</span>
-                <span class="rating-count">234 avaliações</span>
+% if total_reviews > 0:
+                <span class="rating-score">{{ '{:.1f}'.format(score) }}/10</span>
+                <span class="rating-count">{{ total_reviews }} {{ 'avaliação' if total_reviews == 1 else 'avaliações' }}</span>
+% else:
+                <span class="rating-score">–/10</span>
+                <span class="rating-count">Sem avaliações</span>
+% end
               </div>
             </div>
 
@@ -115,36 +134,36 @@
 
     <!-- Media Section -->
     % if (hasattr(game, 'second_image_url') and game.second_image_url) or (hasattr(game, 'trailer_url') and game.trailer_url):
-<section class="media-section">
-    <div class="section-header">
+    <section class="media-section">
+      <div class="section-header">
         <h2>Mídia</h2>
-    </div>
+      </div>
 
-    <div class="media-grid">
+      <div class="media-grid">
         % if hasattr(game, 'trailer_url') and game.trailer_url:
         <div class="media-item media-video-item">
-            <div class="video-container">
-                <video class="media-video" controls poster="{{game.poster_url if hasattr(game, 'poster_url') else ''}}">
-                    <source src="{{game.trailer_url}}" type="video/mp4">
-                    Seu navegador não suporta o elemento de vídeo.
-                </video>
-            </div>
+          <div class="video-container">
+            <video class="media-video" controls poster="{{game.poster_url if hasattr(game, 'poster_url') else ''}}">
+              <source src="{{game.trailer_url}}" type="video/mp4">
+              Seu navegador não suporta o elemento de vídeo.
+            </video>
+          </div>
         </div>
         % end
 
         % if hasattr(game, 'first_image_url') and game.first_image_url:
         <div class="media-item">
-            <img src="{{game.first_image_url}}" alt="Screenshot 1" class="media-image" onclick="openFullscreen('{{game.first_image_url}}')">
+          <img src="{{game.first_image_url}}" alt="Screenshot 1" class="media-image" onclick="openFullscreen('{{game.first_image_url}}')">
         </div>
         % end
 
         % if hasattr(game, 'second_image_url') and game.second_image_url:
         <div class="media-item">
-            <img src="{{game.second_image_url}}" alt="Screenshot 2" class="media-image" onclick="openFullscreen('{{game.second_image_url}}')">
+          <img src="{{game.second_image_url}}" alt="Screenshot 2" class="media-image" onclick="openFullscreen('{{game.second_image_url}}')">
         </div>
         % end
-    </div>
-</section>
+      </div>
+    </section>
     % end
 
     <!-- Description Section -->
@@ -183,32 +202,36 @@
       document.body.style.overflow = 'auto';
     }
 
-     async function toggleFavorite(steamId) {
-       const btn = document.getElementById('btn-favorite');
-       try {
-         const res = await fetch(`/favorite/${steamId}`, {
-           method: 'POST',
-           headers: { 'Content-Type': 'application/json' }
-          });
+    async function toggleFavorite(steamId) {
+      const btn = document.getElementById('btn-favorite');
+      try {
+        const res = await fetch(`/favorite/${steamId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
         const data = await res.json();
-         if (data.status === 'ok') {
-           // adiciona ou remove a class 'active' conforme a ação
-           if (data.action === 'added') {
+        if (data.status === 'ok') {
+          // adiciona ou remove a class 'active' conforme a ação
+          if (data.action === 'added') {
             btn.classList.add('active');
-            } else {
+          } else {
             btn.classList.remove('active');
-            }
+          }
         } else {
-            console.error('Falha ao favoritar:', data);
+          console.error('Falha ao favoritar:', data);
         }
-        } catch (err) {
+      } catch (err) {
         console.error('Erro de rede:', err);
-        }
+      }
     }
 
     function shareGame() {
       if (navigator.share) {
-        navigator.share({ title: '{{ game.name }}', text: 'Confira {{ game.name }}', url: window.location.href });
+        navigator.share({
+          title: '{{ game.name }}',
+          text: 'Confira {{ game.name }}',
+          url: window.location.href
+        });
       } else {
         navigator.clipboard.writeText(window.location.href);
         alert('Link copiado!');
@@ -225,11 +248,13 @@
       const ratingScore = document.querySelector('.rating-score');
       const ratingCount = document.querySelector('.rating-count');
 
+      if (!suitsContainer || !ratingScore || !ratingCount) return;
+
       // Limpar naipes existentes
       suitsContainer.innerHTML = '';
 
-      // Definir naipes do baralho
-      const suits = ['♠', '♥', '♦', '♣'];
+      // Definir naipes do baralho na ordem: ouros, paus, copas, espadas
+      const suits = ['♦', '♣', '♥', '♠'];
 
       // Calcular naipes preenchidos (cada naipe vale 2.5 pontos)
       const filledSuits = Math.min(4, Math.floor(rating / 2.5));
@@ -251,12 +276,10 @@
 
       // Atualizar informações
       ratingScore.textContent = `${rating.toFixed(1)}/10`;
-      ratingCount.textContent = `${totalReviews} avaliações`;
+      ratingCount.textContent = `${totalReviews} ${totalReviews === 1 ? 'avaliação' : 'avaliações'}`;
     }
 
-    // Exemplo de como usar a função (remover em produção)
-    // renderRating(8.5, 234);
-
+    // Event listener para ESC key
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') closeFullscreen();
     });

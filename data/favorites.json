@@ -6,5 +6,13 @@
         "game_ids": [
             1102930
         ]
+    },
+    {
+        "id": 2,
+        "user_id": 4,
+        "name": "Favoritos",
+        "game_ids": [
+            2357570
+        ]
     }
 ]

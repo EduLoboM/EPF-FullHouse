@@ -29,7 +29,7 @@
           % end
         </div>
         <div class="header-actions">
-          <button class="btn-favorite" onclick="toggleFavorite()">
+          <button id="btn-favorite" class="btn-favorite" onclick="toggleFavorite({{ game.steam_id }})">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
             </svg>
@@ -75,15 +75,10 @@
 
             <!-- Sistema de Avaliação com Naipes -->
             <div class="game-rating" id="gameRating">
-              <div class="rating-suits" id="ratingSuits">
-                <span class="suit empty">♠</span>
-                <span class="suit empty">♥</span>
-                <span class="suit empty">♦</span>
-                <span class="suit empty">♣</span>
-              </div>
+              <div class="rating-suits"></div>
               <div class="rating-info">
-                <span class="rating-score" id="ratingScore">-/10</span>
-                <span class="rating-count" id="ratingCount">Carregando...</span>
+                <span class="rating-score">-/10</span>
+                <span class="rating-count">Carregando...</span>
               </div>
             </div>
 
@@ -173,10 +168,31 @@
   </div>
 
   <script>
-    // Extrair Steam ID e dados existentes
-    const steamId = '{{ game.steam_id if hasattr(game, 'steam_id') else '' }}';
-    const existingReview = {{ ('{"rating": ' + str(existing_review.rating) + ', "text": "' + (existing_review.text or '').replace('"', '\\"').replace('\n', '\\n') + '"}') if existing_review else 'null' }};
+    // Função unificada de rating
+    function renderRating(rating, totalReviews) {
+      const suitsContainer = document.querySelector('.rating-suits');
+      const ratingScore = document.querySelector('.rating-score');
+      const ratingCount = document.querySelector('.rating-count');
+      if (!suitsContainer || !ratingScore || !ratingCount) return;
 
+      const suits = ['♦', '♣', '♥', '♠'];
+      const filledSuits = Math.min(4, Math.floor(rating / 2.5));
+      suitsContainer.innerHTML = '';
+      suits.forEach((suit, i) => {
+        const el = document.createElement('span');
+        el.className = 'suit';
+        el.textContent = suit;
+        el.classList.add(i < filledSuits ? 'filled' : 'empty');
+        suitsContainer.appendChild(el);
+      });
+
+      ratingScore.textContent = `${rating.toFixed(1)}/10`;
+      ratingCount.textContent = `${totalReviews} ${totalReviews === 1 ? 'avaliação' : 'avaliações'}`;
+    }
+
+    // Extrair Steam ID e dados existentes
+    const steamId = "{{ game.steam_id if hasattr(game, 'steam_id') else '' }}";
+    const existingReview = {{ ('{"rating": ' + str(existing_review.rating) + ', "text": "' + (existing_review.text or '').replace('"', '\"').replace('\n', '\n') + '"}') if existing_review else 'null' }};
     let currentRating = 0;
     const stars = document.querySelectorAll('.star');
     const reviewText = document.getElementById('reviewText');
@@ -185,103 +201,41 @@
     const submitHeroBtn = document.getElementById('submitReviewHero');
     const loadingOverlay = document.getElementById('loadingOverlay');
 
-    const suits = ['♠', '♥', '♦', '♣'];
-    const suitNames = ['Ruim', 'Regular', 'Bom', 'Excelente'];
-
-    // Inicializar com dados existentes se houver
+    // Iniciar dados
     if (existingReview) {
       currentRating = existingReview.rating;
       reviewText.value = existingReview.text;
       updateRating(currentRating);
     }
 
-    // Carregar rating atual do jogo
+    // Carregar rating do servidor e usar renderRating
     async function loadGameRating() {
       try {
-        const response = await fetch(`/api/reviews/${steamId}`);
-        const data = await response.json();
-
-        if (response.ok) {
-          const avgRating = data.average_rating || 0;
-          const totalReviews = data.total || 0;
-
-          // Calcular rating em escala 0-10 (média * 2.5)
-          const gameRating = avgRating * 2.5;
-
-          // Atualizar display
-          updateGameRatingDisplay(gameRating, totalReviews);
-        }
-      } catch (error) {
-        console.error('Erro ao carregar rating:', error);
-        document.getElementById('ratingScore').textContent = 'N/A';
-        document.getElementById('ratingCount').textContent = 'Erro ao carregar';
+        const res = await fetch(`/api/reviews/${steamId}`);
+        const data = await res.json();
+        renderRating((data.average_rating || 0) * 2.5, data.total || 0);
+      } catch (e) {
+        console.error('Erro ao carregar rating:', e);
       }
-    }
-
-    function updateGameRatingDisplay(rating, totalReviews) {
-      const ratingSuits = document.getElementById('ratingSuits');
-      const ratingScore = document.getElementById('ratingScore');
-      const ratingCount = document.getElementById('ratingCount');
-
-      // Limpar naipes existentes
-      ratingSuits.innerHTML = '';
-
-      // Calcular naipes preenchidos (cada naipe representa 2.5 pontos)
-      const filledSuits = Math.floor(rating / 2.5);
-      const partialSuit = (rating % 2.5) / 2.5; // Para futuras implementações de naipes parciais
-
-      // Renderizar naipes
-      suits.forEach((suit, index) => {
-        const suitElement = document.createElement('span');
-        suitElement.className = 'suit';
-        suitElement.textContent = suit;
-
-        if (index < filledSuits) {
-          suitElement.classList.add('filled');
-        } else if (index === filledSuits && partialSuit > 0.5) {
-          // Naipe parcialmente preenchido (opcional)
-          suitElement.classList.add('partial');
-        } else {
-          suitElement.classList.add('empty');
-        }
-
-        ratingSuits.appendChild(suitElement);
-      });
-
-      // Atualizar informações
-      ratingScore.textContent = totalReviews > 0 ? `${rating.toFixed(1)}/10` : 'Sem avaliações';
-      ratingCount.textContent = totalReviews === 1 ? '1 avaliação' : `${totalReviews} avaliações`;
     }
 
     function updateRating(rating) {
       currentRating = rating;
-      stars.forEach((star, i) => {
-        star.classList.toggle('selected', i < rating);
-        star.classList.toggle('unselected', i >= rating);
-      });
-
-      // Atualizar botão no hero
+      stars.forEach((star, i) => star.classList.toggle('selected', i < rating));
       submitHeroBtn.disabled = rating === 0;
-
       updatePreview();
     }
 
     stars.forEach((star, idx) => star.addEventListener('click', () => updateRating(idx + 1)));
-
-    reviewText.addEventListener('input', function() {
-      charCount.textContent = this.value.length;
-      updatePreview();
-    });
+    reviewText.addEventListener('input', () => { charCount.textContent = reviewText.value.length; updatePreview(); });
 
     function updatePreview() {
       if (currentRating > 0 || reviewText.value.trim()) {
         reviewPreview.style.display = 'block';
-        let starsHtml = Array(currentRating).fill().map((_, i) => suits[i]).join(' ');
-        document.querySelector('.preview-stars').innerHTML = starsHtml;
+        document.querySelector('.preview-stars').innerHTML = Array(currentRating).fill().map((_, i) => ['♠','♥','♦','♣'][i]).join(' ');
         document.querySelector('.preview-rating-text').textContent = currentRating > 0
-          ? `${currentRating}/4 estrelas - ${suitNames[currentRating-1]}`
-          : 'Sem avaliação';
-        document.querySelector('.preview-text').textContent = reviewText.value.trim() || 'Nenhum comentário escrito.';
+          ? `${currentRating}/4 estrelas` : '';
+        document.querySelector('.preview-text').textContent = reviewText.value.trim() || '';
       } else {
         reviewPreview.style.display = 'none';
       }
@@ -351,8 +305,27 @@
     document.getElementById('submitReviewHero').addEventListener('click', submitReview);
     document.getElementById('cancelReviewHero').addEventListener('click', cancelReview);
 
-    function toggleFavorite() {
-      document.querySelector('.btn-favorite').classList.toggle('active');
+         async function toggleFavorite(steamId) {
+       const btn = document.getElementById('btn-favorite');
+       try {
+         const res = await fetch(`/favorite/${steamId}`, {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/json' }
+          });
+        const data = await res.json();
+         if (data.status === 'ok') {
+           // adiciona ou remove a class 'active' conforme a ação
+           if (data.action === 'added') {
+            btn.classList.add('active');
+            } else {
+            btn.classList.remove('active');
+            }
+        } else {
+            console.error('Falha ao favoritar:', data);
+        }
+        } catch (err) {
+        console.error('Erro de rede:', err);
+        }
     }
 
     function shareGame() {
@@ -368,158 +341,10 @@
       }
     }
 
-    // Inicializar contadores e preview
     charCount.textContent = reviewText.value.length;
-    updatePreview();
-
-    // Carregar rating do jogo
     loadGameRating();
+    document.getElementById('submitReviewHero').addEventListener('click', submitReview);
+    document.getElementById('cancelReviewHero').addEventListener('click', cancelReview);
   </script>
-
-  <style>
-    .loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      color: white;
-    }
-
-    .loading-spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px solid #333;
-      border-top: 4px solid #007bff;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-bottom: 20px;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .edit-notice {
-      color: #007bff;
-      font-size: 14px;
-      margin-top: 5px;
-    }
-
-    .star {
-      background: none;
-      border: none;
-      font-size: 2rem;
-      cursor: pointer;
-      color: #ccc;
-      transition: color 0.2s;
-    }
-
-    .star:hover,
-    .star.selected {
-      color: #007bff;
-    }
-
-    .star.unselected {
-      color: #ccc;
-    }
-
-    .preview-stars {
-      font-size: 1.5rem;
-      color: #007bff;
-      margin-right: 10px;
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .rating-section {
-      margin-bottom: 30px;
-    }
-
-    .rating-stars {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .rating-text {
-      color: #666;
-      font-size: 14px;
-    }
-
-    .review-section {
-      margin-bottom: 30px;
-    }
-
-    .review-textarea {
-      width: 100%;
-      min-height: 120px;
-      padding: 15px;
-      border: 2px solid #ddd;
-      border-radius: 8px;
-      font-family: inherit;
-      font-size: 14px;
-      resize: vertical;
-    }
-
-    .review-textarea:focus {
-      outline: none;
-      border-color: #007bff;
-    }
-
-    .char-count {
-      text-align: right;
-      color: #666;
-      font-size: 12px;
-      margin-top: 5px;
-    }
-
-    .review-preview {
-      background: #f8f9fa;
-      padding: 20px;
-      border-radius: 8px;
-      margin-top: 20px;
-    }
-
-    .preview-rating {
-      display: flex;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .preview-text {
-      color: #333;
-      line-height: 1.5;
-      font-style: italic;
-    }
-
-    .suit {
-      font-size: 1.5rem;
-      margin-right: 5px;
-      transition: color 0.3s ease;
-    }
-
-    .suit.filled {
-      color: #007bff;
-    }
-
-    .suit.empty {
-      color: #ccc;
-    }
-
-    .suit.partial {
-      color: #66b3ff;
-    }
-  </style>
 </body>
 </html>
