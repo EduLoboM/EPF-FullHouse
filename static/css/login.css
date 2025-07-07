@@ -1,0 +1,188 @@
+/* ===== RESET E ESTILOS GERAIS ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif; 
+}
+
+/* ===== SEÇÃO DO FORMULÁRIO ===== */
+.form-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    background-color: #FFFFFF;
+}
+
+/* ===== LOGO FULL HOUSE ===== */
+.full-house {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 224px;
+    height: 40px;
+}
+
+/* ===== CONTAINER PRINCIPAL (CAIXA CINZA) ===== */
+.form-container {
+    background-color: #d9d9d9;
+    padding: 40px;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 450px;
+    margin: 20px auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== CABEÇALHO DO FORMULÁRIO ===== */
+.form-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.icon-wrapper {
+    background-color: #ffffff;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.icon-wrapper i {
+    font-size: 24px;
+    color: #333;
+}
+
+.create-login {
+    font-size: 24px;
+    color: #000;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.subtitle {
+    color: #555;
+    font-size: 14px;
+}
+
+/* ===== FORMULÁRIO E INPUTS ===== */
+.user-form {
+    width: 100%;
+}
+
+.form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    width: 100%;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 600;
+}
+
+.input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.user-form input {
+    width: 100%;
+    padding: 12px 15px 12px 40px;
+    border: none !important; 
+    background-color: #fff !important;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s;
+}
+
+.user-form input:focus {
+    box-shadow: 0 0 0 2px rgba(0, 119, 255, 0.2);
+}
+
+.input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #777;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #777;
+}
+
+/* ===== BOTÕES ===== */
+.form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+}
+
+.btn-primary {
+    background-color: #FF524F;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #ce3f3c;
+}
+
+.btn-secondary {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.btn-secondary:hover {
+    background-color: #e0e0e0;
+}
+
+/* ===== ALERTA DE ERRO ===== */
+.alert-danger {
+    background-color: #ffebee;
+    color: #d32f2f;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #d32f2f;
+}
