@@ -1,4 +1,4 @@
-# Projeto Template: POO com Python + Bottle + JSON
+# FULL HOUSE
 
 Este é um projeto de template educacional voltado para o ensino de **Programação Orientada a Objetos (POO)** do Prof. Lucas Boaventura, Universidade de Brasília (UnB).
 
@@ -6,7 +6,7 @@ Utiliza o microframework **Bottle**. Ideal para uso em disciplinas introdutória
 
 ## 💡 Objetivo
 
-Fornecer uma base simples, extensível e didática para construção de aplicações web orientadas a objetos com aplicações WEB em Python, ideal para trabalhos finais ou exercícios práticos.
+Fornecer uma base simples, extensível e didática para construção de aplicações web orientadas a objetos com aplicações WEB em Python, ideal para trabalhos finais ou exercícios práticos para aprender como um site de reviews de jogos funciona usando a API da steam.
 
 ---
 
@@ -34,9 +34,7 @@ poo-python-bottle-template/
 ## 📁 Descrição das Pastas
 
 ### `controllers/`
-Contém as classes responsáveis por lidar com as rotas da aplicação. Exemplos:
-- `user_controller.py`: rotas para listagem, adição, edição e remoção de usuários.
-- `base_controller.py`: classe base com utilitários comuns.
+Contém as classes responsáveis por lidar com as rotas da aplicação.
 
 ### `models/`
 Define as classes que representam os dados da aplicação. Exemplo:
