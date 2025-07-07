@@ -5,6 +5,7 @@ import uuid
 import json
 from typing import Optional, Any, cast, Dict, Any
 from models.lista import FavoriteListModel
+from models.user import UserModel, User, Admin
 from services.steam_service import SteamService
 
 
@@ -47,6 +48,58 @@ class BaseController:
         self.app.route('/game/<steam_id:int>/lista/<list_id:int>/adicionar',
                        method='POST',
                        callback=self.require_login(self.toggle_in_list))
+        self.app.route(
+            '/profile/edit',
+            method='GET',
+            callback=self.require_login(self.profile_edit_form)
+        )
+
+        # Rota para submissão da edição (POST)
+        self.app.route(
+            '/profile/edit',
+            method='POST',
+            callback=self.require_login(self.profile_edit)
+        )
+    # dentro de BaseController._setup_base_routes(), após as rotas normais
+    # Dashboard de usuários (GET /admin)
+        self.app.route(
+            '/admin',
+            method='GET',
+            callback=self.require_login(self.require_admin(self.admin_dashboard))
+        )
+
+        # Formulário para criar novo admin (GET /admin/users/add)
+        self.app.route(
+            '/admin/users/add',
+            method='GET',
+            callback=self.require_login(self.require_admin(self.admin_create_form))
+        )
+        # Submissão do form (POST /admin/users/add)
+        self.app.route(
+            '/admin/users/add',
+            method='POST',
+            callback=self.require_login(self.require_admin(self.admin_create))
+        )
+
+        # Formulário de edição (GET /admin/users/edit/<id>)
+        self.app.route(
+            '/admin/users/edit/<user_id:int>',
+            method='GET',
+            callback=self.require_login(self.require_admin(self.admin_edit_form))
+        )
+        # Submissão da edição (POST /admin/users/edit/<id>)
+        self.app.route(
+            '/admin/users/edit/<user_id:int>',
+            method='POST',
+            callback=self.require_login(self.require_admin(self.admin_edit))
+        )
+
+        # Deleção de usuário (POST /admin/users/delete/<id>)
+        self.app.route(
+            '/admin/users/delete/<user_id:int>',
+            method='POST',
+            callback=self.require_login(self.require_admin(self.admin_delete))
+        )
 
         self.app.route('/game/<steam_id:int>/review', method=['GET'], callback=self.require_login(self.game_review))
         self.app.route('/profile', method=['GET'], callback=self.require_login(self.profile))
@@ -84,6 +137,14 @@ class BaseController:
             session = self.get_session()
             if not session:
                 return redirect('/login')
+            return func(*args, **kwargs)
+        return wrapper
+
+    def require_admin(self, func):
+        def wrapper(*args, **kwargs):
+            session = self.get_session()
+            if not session or not session.get('is_admin'):
+                return self.render('error', message="Acesso negado", error_code=403, user=session)
             return func(*args, **kwargs)
         return wrapper
 
@@ -585,3 +646,148 @@ class BaseController:
             fav_model.add_game_to_list(list_id, steam_id, user_id)
 
         return redirect(f'/game/{steam_id}/lista')
+
+    def admin_dashboard(self):
+        users = self.user_model.get_all()
+        return self.render('users', users=users)
+
+    def admin_create_form(self):
+        # user=None deixa claro ao template que estamos em modo “criar”
+        return self.render(
+            'users_add',
+            user=None,
+            action='/admin/users/add',
+            is_admin=True
+        )
+
+    def admin_create(self):
+        session = self.get_session()
+        if session is None:
+            return redirect('/login')
+        # Como este método só roda se for admin, session existe
+        current_id = int(session['id'])
+        current: Admin = self.user_model.get_by_id(current_id)  # type: ignore
+        if not isinstance(current, Admin):
+            return self.render('error', message="Você não é admin", error_code=403, user=session)
+
+        # Lê dados do form
+        name = self.safe_get_form_data('name')
+        email = self.safe_get_form_data('email')
+        birthdate = self.safe_get_form_data('birthdate')
+        password = self.safe_get_form_data('password')
+
+        new_id = self.get_next_user_id()
+        new_admin = Admin(id=new_id, name=name, email=email, password=password, birthdate=birthdate)
+        current.create_admin(new_admin, self.user_model)
+        return redirect('/admin')
+
+    def admin_edit_form(self, user_id):
+        user_to_edit = self.user_model.get_by_id(user_id)
+        if not user_to_edit:
+            return self.render('error', message="Usuário não encontrado", error_code=404, user=self.get_session())
+        return self.render(
+            'users_add',                 # reaproveita o mesmo template
+            user=user_to_edit,           # agora user existe
+            action=f'/admin/users/edit/{user_id}',
+            is_admin=True
+        )
+
+    def admin_edit(self, user_id):
+        session = self.get_session()
+        if session is None:
+            return redirect('/login')
+        current_id = int(session['id'])
+        current: Admin = self.user_model.get_by_id(current_id)  # type: ignore
+        if not isinstance(current, Admin):
+            return self.render('error', message="Você não é admin", error_code=403, user=session)
+
+        user = self.user_model.get_by_id(user_id)
+        if not user:
+            return self.render('error', message="Usuário não encontrado", error_code=404, user=session)
+
+        # Atualiza campos
+        name = self.safe_get_form_data('name') or user.name
+        email = self.safe_get_form_data('email') or user.email
+        birthdate = self.safe_get_form_data('birthdate') or user.birthdate
+        password = self.safe_get_form_data('password')
+        if password:
+            user.password = password
+
+        updated_user = User(
+            id=user.id,
+            name=name,
+            email=email,
+            password=user.password,
+            birthdate=birthdate
+        )
+        current.edit_user(updated_user, self.user_model)
+        return redirect('/admin')
+
+    def admin_delete(self, user_id):
+        session = self.get_session()
+        if session is None:
+            return redirect('/login')
+        current_id = int(session['id'])
+        current: Admin = self.user_model.get_by_id(current_id)  # type: ignore
+        if not isinstance(current, Admin):
+            return self.render('error', message="Você não é admin", error_code=403, user=session)
+
+        # Evita que admin delete a si próprio, se quiser
+        if user_id == current_id:
+            return self.render('error', message="Admin não pode se auto-deletar aqui", error_code=400, user=session)
+
+        # Garante que o usuário existe
+        target = self.user_model.get_by_id(user_id)
+        if not target:
+            return self.render('error', message="Usuário não encontrado", error_code=404, user=session)
+
+        current.delete_user(self.user_model, user_id)
+        return redirect('/admin')
+
+    def profile_edit_form(self):
+        """Exibe o form para o usuário editar seu próprio perfil."""
+        session = self.get_session()
+        if session is None:
+            return redirect('/login')
+        # session já tem id, email, name, birthdate, is_admin
+        return self.render('profile_edit', user=session)
+
+    def profile_edit(self):
+        session = self.get_session()
+        if session is None:
+            return redirect('/login')
+        session = cast(Dict[str, Any], session)
+        user_id = int(session['id'])
+
+        # Busca o objeto User
+        current = self.user_model.get_by_id(user_id)
+        if current is None:
+            # Não deveria ocorrer, mas garante para o Pyright e para sua lógica
+            return self.render('error', message="Usuário não encontrado", error_code=404, user=session)
+
+        # Garante ao Pyright que current não é None e é um User/Admin
+        current = cast(User, current)
+
+        # Lê dados do form e monta o updated
+        name      = self.safe_get_form_data('name')      or current.name
+        email     = self.safe_get_form_data('email')     or current.email
+        birthdate = self.safe_get_form_data('birthdate') or current.birthdate
+        password  = self.safe_get_form_data('password')  or current.password
+
+        updated = User(
+            id=current.id,
+            name=name,
+            email=email,
+            password=password,
+            birthdate=birthdate
+        )
+
+        # Chama o override edit_user de User ou Admin
+        current.edit_user(updated, self.user_model)
+
+        # Atualiza a sessão
+        session['name']      = updated.name
+        session['email']     = updated.email
+        session['birthdate'] = updated.birthdate
+
+        return redirect('/profile')

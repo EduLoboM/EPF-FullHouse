@@ -14,6 +14,11 @@
       <span class="header-title">Olá, {{user['name']}}</span>
     </div>
     <div class="header-actions-right">
+      <!-- Botão Editar Perfil -->
+      <a href="/profile/edit" class="btn-edit-profile">
+        <i class="fas fa-user-edit"></i> Editar Perfil
+      </a>
+      <!-- Botão Logout -->
       <a href="/logout" class="btn-logout">Logout</a>
     </div>
   </header>
@@ -66,7 +71,7 @@
           <li class="review-item">
             <div class="review-header">
               <strong>Jogo:</strong>
-              <a href="/game/{{rev.game_id}}">{{steam.get_game_details(rev.game_id).name}}</a>
+              <a href="/game/{{rev.game_id}}">{{ steam.get_game_details(rev.game_id).name }}</a>
               <span class="review-rating">{{rev.rating}} / 4</span>
             </div>
             <p class="review-text">{{rev.text}}</p>

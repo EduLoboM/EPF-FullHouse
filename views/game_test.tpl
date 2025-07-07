@@ -13,11 +13,10 @@
       Status API Steam: {{ 'FUNCIONANDO' if games else 'FALHOU' }}
     </div>
     <!-- Botão único para Meu Perfil -->
-    <button class="btn-profile" onclick="window.location.href='/profile'">
+    <button class="btn-profile" onclick="window.location.href='{{'/admin' if user and user.get('is_admin', False) else '/profile'}}'">
       Meu Perfil
     </button>
   </div>
-
   <div class="game-grid">
     % for game in games:
     <div class="game-card" onclick="redirectToGame('{{game.steam_id}}')" style="cursor: pointer;">
@@ -28,12 +27,10 @@
         Poster não disponível
       </div>
       % end
-
       <div class="game-content">
         <h2 class="game-title">{{game.name}}</h2>
         <p class="game-price">{{game.price}}</p>
         <p>Lançamento: {{game.release_date}}</p>
-
         <div class="screenshots">
           % if game.first_image_url:
           <img src="{{game.first_image_url}}" alt="Screenshot 1" class="screenshot">
@@ -42,7 +39,6 @@
           <img src="{{game.second_image_url}}" alt="Screenshot 2" class="screenshot">
           % end
         </div>
-
         % if game.trailer_url:
         <div class="trailer-container">
           <video controls class="trailer">
@@ -55,7 +51,6 @@
     </div>
     % end
   </div>
-
   <script>
     function redirectToGame(appid) {
       window.location.href = `/game/${appid}`;

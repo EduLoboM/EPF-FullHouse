@@ -11,15 +11,23 @@
                 Gestão de Usuários
             </h1>
         </div>
-        <a href="/users/add" class="btn btn-primary">
-            <i class="fas fa-plus-circle"></i> Criar Admin
-        </a>
+        <div class="header-actions">
+            <a href="/" class="btn btn-secondary">
+                <i class="fas fa-home"></i> Início
+            </a>
+            <a href="/logout" class="btn btn-secondary">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+            <a href="/admin/users/add" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i> Criar Admin
+            </a>
+        </div>
     </div>
 
     <div class="management-stats">
         <div class="stat-card">
             <div>
-                <h3>{{len(users)}}</h3>
+                <h3>{{ len(users) }}</h3>
                 <p>Usuários Cadastrados</p>
             </div>
         </div>
@@ -49,21 +57,21 @@
                     % for u in users:
                     <tr>
                         <td class="user-id">
-                            <div class="id-badge">{{u.id}}</div>
+                            <div class="id-badge">{{ u.id }}</div>
                         </td>
                         <td>
                             <div class="user-info">
-                                <div class="user-name">{{u.name}}</div>
+                                <div class="user-name">{{ u.name }}</div>
                             </div>
                         </td>
-                        <td><a href="mailto:{{u.email}}" class="email-link">{{u.email}}</a></td>
-                        <td>{{u.birthdate}}</td>
+                        <td><a href="mailto:{{ u.email }}" class="email-link">{{ u.email }}</a></td>
+                        <td>{{ u.birthdate }}</td>
                         <td class="text-center">
                             <div class="action-buttons">
-                                <a href="/users/edit/{{u.id}}" class="btn-action btn-edit" title="Editar">
+                                <a href="/admin/users/edit/{{ u.id }}" class="btn-action btn-edit" title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form action="/users/delete/{{u.id}}" method="post"
+                                <form action="/admin/users/delete/{{ u.id }}" method="post"
                                       onsubmit="return confirm('Tem certeza que deseja excluir este usuário?');">
                                     <button type="submit" class="btn-action btn-delete" title="Excluir">
                                         <i class="fas fa-trash-alt"></i>
@@ -79,7 +87,7 @@
 
         <div class="table-footer">
             <div class="pagination-info">
-                Mostrando 1 a {{len(users)}} de {{len(users)}} registros
+                Mostrando 1 a {{ len(users) }} de {{ len(users) }} registros
             </div>
             <div class="pagination-controls">
                 <button class="btn-pagination disabled">

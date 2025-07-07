@@ -33,5 +33,19 @@
         "user_id": 6,
         "rating": 4,
         "text": "Foda"
+    },
+    {
+        "id": 6,
+        "game_id": 1973530,
+        "user_id": 5,
+        "rating": 3,
+        "text": "WOW"
+    },
+    {
+        "id": 7,
+        "game_id": 2767030,
+        "user_id": 5,
+        "rating": 1,
+        "text": "gooning"
     }
 ]

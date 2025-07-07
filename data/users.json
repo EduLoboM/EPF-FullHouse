@@ -1,14 +1,7 @@
 [
     {
-        "id": 1,
-        "name": "Edu",
-        "email": "eduardolbo1707@gmail.com",
-        "password": "Coiso12345",
-        "birthdate": "2005-12-07"
-    },
-    {
         "id": 2,
-        "name": "Zeca",
+        "name": "Zecaw",
         "email": "Zeca@gmail.com",
         "password": "123123",
         "birthdate": "2025-07-05"
@@ -40,5 +33,21 @@
         "email": "mari123@mari.com",
         "password": "111111",
         "birthdate": "1111-11-11"
+    },
+    {
+        "id": 7,
+        "name": "Admin Master",
+        "email": "admin@exemplo.com",
+        "password": "SenhaForte!23",
+        "birthdate": "1970-01-01",
+        "is_admin": true
+    },
+    {
+        "id": 8,
+        "name": "Admin2",
+        "email": "Admin2@hotmail.com",
+        "password": "111111111",
+        "birthdate": "1111-11-11",
+        "is_admin": true
     }
 ]

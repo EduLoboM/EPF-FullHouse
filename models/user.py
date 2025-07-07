@@ -16,17 +16,22 @@ class User:
                 f"email='{self.email}', birthdate='{self.birthdate}')")
 
     def to_dict(self):
-        return {
+        base = {
             'id': self.id,
             'name': self.name,
             'email': self.email,
             'password': self.password,
             'birthdate': self.birthdate
         }
+        if isinstance(self, Admin):
+            base['is_admin'] = True
+        return base
 
     @classmethod
     def from_dict(cls, data):
-        return cls(
+        is_admin = data.get('is_admin', False)
+        klass = Admin if is_admin else User
+        return klass(
             id=data.get('id', 0),
             name=data.get('name', ''),
             email=data.get('email', ''),

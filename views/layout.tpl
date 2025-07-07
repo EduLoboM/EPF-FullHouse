@@ -24,7 +24,7 @@
                     <a href="/helper">Ajuda</a>
                 </nav>
                 <div class="user-info">
-                    <span class="welcome">Olá, {{user['name']}}</span>
+                    <span class="welcome">Olá, {{user.name}}</span>
                     <a href="/logout" class="logout-btn">
                         <i class="fas fa-sign-out-alt"></i>
                         Sair
