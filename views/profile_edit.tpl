@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <title>Editar Perfil – {{user['name']}}</title>
-  <link rel="stylesheet" href="/css/profile.css">
+  <link rel="stylesheet" href="/css/profile-edit.css">
 </head>
+
 <body>
   <header class="profile-header">
+    <img src="/static/img/FULL-removebg-preview_1.webp" alt="Full House Logo" class="full-house">
     <div class="header-actions-left">
       <a href="/profile" class="btn-back">← Voltar ao Perfil</a>
       <span class="header-title">Editar Perfil</span>
@@ -21,18 +24,15 @@
       <form action="/profile/edit" method="post" class="edit-profile-form">
         <div class="form-group">
           <label for="name">Nome</label>
-          <input id="name" name="name" type="text" required
-                 value="{{user['name']}}">
+          <input id="name" name="name" type="text" required value="{{user['name']}}">
         </div>
         <div class="form-group">
           <label for="email">Email</label>
-          <input id="email" name="email" type="email" required
-                 value="{{user['email']}}">
+          <input id="email" name="email" type="email" required value="{{user['email']}}">
         </div>
         <div class="form-group">
           <label for="birthdate">Data de Nascimento</label>
-          <input id="birthdate" name="birthdate" type="date" required
-                 value="{{user['birthdate']}}">
+          <input id="birthdate" name="birthdate" type="date" required value="{{user['birthdate']}}">
         </div>
         <div class="form-group">
           <label for="password">Senha (deixe em branco para manter)</label>
@@ -47,4 +47,5 @@
     </section>
   </main>
 </body>
+
 </html>

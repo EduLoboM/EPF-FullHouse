@@ -40,5 +40,21 @@
             1973530,
             730
         ]
+    },
+    {
+        "id": 6,
+        "user_id": 4,
+        "name": "gdg",
+        "game_ids": [
+            730
+        ]
+    },
+    {
+        "id": 7,
+        "user_id": 9,
+        "name": "Favoritos",
+        "game_ids": [
+            730
+        ]
     }
 ]

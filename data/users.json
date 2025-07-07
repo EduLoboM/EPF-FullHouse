@@ -49,5 +49,12 @@
         "password": "111111111",
         "birthdate": "1111-11-11",
         "is_admin": true
+    },
+    {
+        "id": 9,
+        "name": "Tralalero Patapim",
+        "email": "alberteinstein@gmail.com",
+        "password": "123456",
+        "birthdate": "2025-07-06"
     }
 ]

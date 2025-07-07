@@ -1,98 +1,450 @@
-body {
-  font-family: sans-serif;
-  background: #f5f5f5;
-  margin: 0;
-  padding: 0;
+@charset "UTF-8";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-.profile-header {
-  background: #333;
+html {
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
   color: #fff;
+  background-color: #000;
+  position: relative;
+  z-index: 0;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url(/static/img/hi.res.crt.png);
+  background-size: cover;
+  background-position: center;
+  opacity: 0.5;
+  z-index: -1;
+  pointer-events: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 1rem;
+  background: transparent;
+}
+
+.header {
+  margin-left: 160px;
+}
+
+/* ===== LOGO FULL HOUSE ===== */
+.full-house {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 224px;
+  height: 40px;
+}
+
+.header .nav-container {
   display: flex;
+  align-items: center;
+  justify-content: center;
   justify-content: space-between;
+  padding: 10px;
+}
+
+.header .nav-container .btn-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #fff;
+  font-size: 0.9rem;
+  transition: color 0.3s;
+}
+
+.header .nav-container .btn-back svg {
+  stroke-width: 2;
+}
+
+.header .nav-container .btn-back:hover {
+  color: #1e90ff;
+}
+
+.header .nav-container .header-actions button {
+  background: none;
+  border: none;
+  margin-left: 0.5rem;
+  cursor: pointer;
+  color: #fff;
+  transition: color 0.3s;
+}
+
+.header .nav-container .header-actions button.active,
+.header .nav-container .header-actions button:hover {
+  color: #1e90ff;
+}
+
+.header .nav-container .header-actions button svg {
+  stroke-width: 2;
+}
+
+.hero {
+  position: relative;
+  margin-top: 1rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.hero .hero-background {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.hero .hero-background .bg-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(4px);
+  transform: scale(1.1);
+}
+
+.hero .hero-background .hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.hero .hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.hero .hero-content .hero-main {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
   align-items: center;
 }
 
-.profile-header .btn-back {
+.hero .hero-content .hero-main .game-poster {
+  flex: 0 0 400px;
+  display: flex;
+  align-items: center;
+}
+
+.hero .hero-content .hero-main .game-poster .poster-container {
+  width: 100%;
+}
+
+.hero .hero-content .hero-main .game-poster .poster-image {
+  width: 100%;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.hero .hero-content .hero-main .game-poster .poster-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 400px;
+  height: 600px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+}
+
+.hero .hero-content .hero-main .game-info {
+  flex: 1;
   color: #fff;
-  text-decoration: none;
-  font-size: 0.9rem;
 }
 
-.profile-header .btn-back:hover {
-  text-decoration: underline;
+.hero .hero-content .hero-main .game-info .game-title {
+  margin: 0 0 0.5rem;
+  font-size: 2rem;
+  font-weight: 700;
 }
 
-section {
-  padding: 2rem;
-  background: #fff;
-  margin: 1rem auto;
-  max-width: 800px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.hero .hero-content .hero-main .game-info .game-description {
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
 }
 
-section h2 {
-  margin-top: 0;
-  color: #444;
-  border-bottom: 2px solid #ddd;
-  padding-bottom: 0.5rem;
+.hero .hero-content .hero-main .game-info .game-rating {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
 }
 
-.favorites-section .favorite-lists {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+.hero .hero-content .hero-main .game-info .game-rating .rating-suits {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 1.8rem;
+}
+
+.hero .hero-content .hero-main .game-info .game-rating .rating-suits .suit.filled {
+  color: white;
+}
+
+.hero .hero-content .hero-main .game-info .game-rating .rating-suits .suit.empty {
+  color: #333;
+}
+
+.hero .hero-content .hero-main .game-info .game-rating .rating-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.hero .hero-content .hero-main .game-info .game-rating .rating-info .rating-score {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.hero .hero-content .hero-main .game-info .game-rating .rating-info .rating-count {
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+.hero .hero-content .hero-main .game-info .game-meta {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.hero .hero-content .hero-main .game-info .game-meta .meta-item .meta-label {
+  font-weight: 500;
+}
+
+.hero .hero-content .hero-main .game-info .game-meta .meta-item .meta-value {
+  margin-left: 0.3rem;
+}
+
+.hero .hero-content .hero-main .game-info .game-meta .meta-item .price {
+  color: #1e90ff;
+  font-weight: 600;
+}
+
+.hero .hero-content .hero-main .game-info .action-buttons {
+  display: flex;
   gap: 1rem;
 }
 
-.favorites-section .favorite-lists .fav-list-card {
-  background: #fafafa;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 1rem;
+.hero .hero-content .hero-main .game-info .action-buttons .btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  background: #04273D;
+  color: #fff;
 }
 
-.favorites-section .favorite-lists .fav-list-card h3 {
-  margin: 0 0 0.5rem;
-  font-size: 1.1rem;
+.hero .hero-content .hero-main .game-info .action-buttons .btn-primary:hover {
+  background: #051f30;
 }
 
-.favorites-section .favorite-lists .fav-list-card .games-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.hero .hero-content .hero-main .game-info .action-buttons .btn-primary svg {
+  margin-right: 0.5rem;
 }
 
-.favorites-section .favorite-lists .fav-list-card .games-list li {
-  margin-bottom: 0.3rem;
+.hero .hero-content .hero-main .game-info .action-buttons .btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  min-width: 220px;
+  /* Largura mínima igual para ambos */
+  background: transparent;
+  border: 2px solid #fff;
+  color: #fff;
 }
 
-.favorites-section .favorite-lists .fav-list-card .games-list li a {
-  color: #007acc;
-  text-decoration: none;
+.games-list {
+
+  color: #3e799e;
+
 }
 
-.favorites-section .favorite-lists .fav-list-card .games-list li a:hover {
-  text-decoration: underline;
+.games-list:hover {
+
+  color: #2e5b77;
+
 }
 
-.favorites-section .favorite-lists .fav-list-card .empty {
-  font-style: italic;
-  color: #888;
+.review-name {
+
+  color: #3e799e;
+
 }
 
-.reviews-section .reviews-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.review-name:hover {
+
+  color: #2e5b77;
+
 }
 
-.reviews-section .reviews-list .review-item {
-  border-bottom: 1px solid #eee;
-  padding: 1rem 0;
+.hero .hero-content .hero-main .game-info .action-buttons .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
-.reviews-section .reviews-list .review-item p {
-  margin: 0.5rem 0 0;
+.hero .hero-content .hero-main .game-info .action-buttons .btn-secondary svg {
+  margin-right: 0.5rem;
+}
+
+.section-header {
+  margin: 2rem 0 1rem;
+}
+
+.section-header h2 {
+  font-size: 1.5rem;
+  color: #fff;
+  border-bottom: 2px solid #083c5c;
+  display: inline-block;
+  padding-bottom: 0.3rem;
+}
+
+.media-section .section-header {
+  margin-bottom: 0.5rem;
+}
+
+.media-section .media-grid {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.media-section .media-grid .media-item {
+  flex: 0 0 180px;
+  height: 120px;
+  position: relative;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.media-section .media-grid .media-item .media-image,
+.media-section .media-grid .media-item .media-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.media-section .media-grid .media-item video {
+  display: block;
+}
+
+.media-section .media-grid .media-item .play-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.description-section .description-content {
+  background: #FFFFFF;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  line-height: 1.8;
+  color: #000;
+}
+
+#fullscreen-modal {
+  display: none;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.modal .modal-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.modal .modal-content .modal-close {
+  position: absolute;
+  top: -1rem;
+  right: -1rem;
+  background: #fff;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #555;
+}
+
+.modal .modal-content img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .hero-content .hero-main {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero-content .hero-main .game-info {
+    text-align: center;
+  }
+
+  .hero-content .hero-main .game-info .game-rating {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.75rem;
+  }
+
+  .hero-content .hero-main .game-info .action-buttons {
+    flex-direction: column;
+  }
+
+  .hero-content .hero-main .game-info .action-buttons button {
+    width: 100%;
+  }
 }
