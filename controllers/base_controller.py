@@ -312,7 +312,7 @@ class BaseController:
 
         from services.steam_service import SteamService
         steam_service = SteamService()
-        test_ids = ["730", "570", "1102930", "1973530", "2357570", "2767030"]
+        test_ids = ["730", "570", "1623730", "1973530", "2357570", "2767030"]
         games = []
         for steam_id in test_ids:
             game = steam_service.get_game_details(steam_id)
