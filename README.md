@@ -78,6 +78,7 @@ venv\\Scripts\\activate     # Windows
 2. Entre dentro do seu projeto criado a partir do template e instale as dependências:
 ```bash
 pip install -r requirements.txt
+pip install requests
 ```
 
 3. Rode a aplicação:
