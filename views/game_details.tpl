@@ -14,6 +14,7 @@
     <!-- Header com navegação -->
     <header class="header">
       <div class="nav-container">
+        <img src="/static/img/FULL-removebg-preview_1.webp" alt="Full House Logo" class="full-house">
         <a href="/test-game" class="btn-back">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M19 12H5M12 19l-7-7 7-7"/>

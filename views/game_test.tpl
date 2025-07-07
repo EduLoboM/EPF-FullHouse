@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Teste API Steam</title>
   <link rel="stylesheet" href="/static/css/game_test.css">
+  <img src="/static/img/FULL-removebg-preview_1.webp" alt="Full House Logo" class="full-house">
 </head>
 <body>
   <!-- Status da API + botão de perfil -->
@@ -30,23 +31,6 @@
       <div class="game-content">
         <h2 class="game-title">{{game.name}}</h2>
         <p class="game-price">{{game.price}}</p>
-        <p>Lançamento: {{game.release_date}}</p>
-        <div class="screenshots">
-          % if game.first_image_url:
-          <img src="{{game.first_image_url}}" alt="Screenshot 1" class="screenshot">
-          % end
-          % if game.second_image_url:
-          <img src="{{game.second_image_url}}" alt="Screenshot 2" class="screenshot">
-          % end
-        </div>
-        % if game.trailer_url:
-        <div class="trailer-container">
-          <video controls class="trailer">
-            <source src="{{game.trailer_url}}" type="video/mp4">
-            Seu navegador não suporta vídeos.
-          </video>
-        </div>
-        % end
       </div>
     </div>
     % end

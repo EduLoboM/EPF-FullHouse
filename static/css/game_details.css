@@ -44,9 +44,16 @@ a {
 }
 
 .header {
-  background: #2e2e2e;
-  padding: 1rem 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  margin-left: 160px;
+}
+
+/* ===== LOGO FULL HOUSE ===== */
+.full-house {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 224px;
+  height: 40px;
 }
 
 .header .nav-container {
@@ -54,6 +61,7 @@ a {
   align-items: center;
   justify-content: center;
   justify-content: space-between;
+  padding: 10px;
 }
 
 .header .nav-container .btn-back {
@@ -247,12 +255,12 @@ a {
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s;
-  background: #1e90ff;
+  background: #04273D;
   color: #fff;
 }
 
 .hero .hero-content .hero-main .game-info .action-buttons .btn-primary:hover {
-  background: #007cf4;
+  background: #051f30;
 }
 
 .hero .hero-content .hero-main .game-info .action-buttons .btn-primary svg {
@@ -292,7 +300,7 @@ a {
 .section-header h2 {
   font-size: 1.5rem;
   color: #fff;
-  border-bottom: 2px solid #1e90ff;
+  border-bottom: 2px solid #083c5c;
   display: inline-block;
   padding-bottom: 0.3rem;
 }
@@ -340,12 +348,12 @@ a {
 }
 
 .description-section .description-content {
-  background: #2e2e2e;
+  background: #FFFFFF;
   padding: 1.5rem;
   border-radius: 0.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   line-height: 1.8;
-  color: #fff;
+  color: #000;
 }
 
 #fullscreen-modal {
